@@ -1,5 +1,5 @@
-const monggose = require('mongoose');
-const {Schema} = monggose;
+const mongose = require('mongoose');
+const {Schema} = mongose;
 const userSchema = new Schema({
     phone_number: {
         type: String,
@@ -58,12 +58,12 @@ const userSchema = new Schema({
         default: false
     },
     role: {
-        type: Number,
-        enum: [0,1,2],
-        default: 2
+        type: String,
+        enum: ['ADMIN','DOCTOR','PATIENT'],
+        default: 'PATIENT'
     }
 }, {timestamp: true});
-module.exports = monggose.model('User', userSchema);
+module.exports = mongose.model('User', userSchema);
 //0 admin, 1 doctor, 2 patient
 
 
