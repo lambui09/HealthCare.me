@@ -8,6 +8,10 @@ const notificationSchema = new Schema({
     content: {
         type: String,
         default: "",
+    },
+    has_read: {
+        type : Boolean,
+        default: false
     }
 }, {timestamp: true});
 module.exports = mongoose('Notification', notificationSchema);
