@@ -5,6 +5,7 @@ const favoriteSchema = new Schema({
         type: Boolean,
         default: false
     }
-});
+}, {timestamp : true});
+module.exports = mongoose.model('Favorite', favoriteSchema);
 
 
