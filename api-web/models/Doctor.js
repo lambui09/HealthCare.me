@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const {Schema} = new Schema({
+const {Schema} = mongoose;
+const doctorSchema = new Schema({
     phone_number: {
         type: String,
         required: true
@@ -57,25 +58,25 @@ const {Schema} = new Schema({
         default: false
     },
     role: {
-        type: Number,
-        enum: [0, 1, 2],
-        default: 2
+        type: String,
+        enum: ['ADMIN','DOCTOR','PATIENT'],
+        default: 'PATIENT'
     },
-    medical_doctor : {
-        type : String,
-        default: ""
-    },
-    awards : {
+    medical_doctor: {
         type: String,
         default: ""
     },
-    about : {
-        type : String,
+    awards: {
+        type: String,
         default: ""
     },
-    year_experience : {
+    about: {
+        type: String,
+        default: ""
+    },
+    year_experience: {
         type: Number,
         default: 0
     }
-
-});
+}, {timestamp: true});
+module.exports = mongoose.model("Doctor", doctorSchema);

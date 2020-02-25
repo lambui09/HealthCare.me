@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const {Schema} = new Schema({
+const {Schema} = mongoose;
+const patientSchema = new Schema({
     phone_number: {
         type: String,
         required: true
@@ -57,16 +58,18 @@ const {Schema} = new Schema({
         default: false
     },
     role: {
-        type: Number,
-        enum: [0, 1, 2],
-        default: 2
+        type: String,
+        enum: ['ADMIN','DOCTOR','PATIENT'],
+        default: 'PATIENT'
     },
     push_notification_enabled: {
         type: Boolean,
         default: false
     },
-    unseen_notification_count : {
+    unseen_notification_count: {
         type: Number,
         default: 0
     }
-});
+}, {timestamp: true});
+module.exports =mongoose.model("Patient", patientSchema);
+
