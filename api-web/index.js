@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-require('./config/database')
+require('./config/database');
 
 const app = express();
 
@@ -9,8 +9,25 @@ app.get('/', (req, res) => {
         msg: 'aaaa'
     });
 });
-
-app.listen(3000, (err) => {
-    if (err) throw err;
-    console.log('Server is running...')
-});
+// app.get('/api/v1/signup', (req, res) =>{
+//     return res.json({
+//         msg: 'input signup'
+//     });
+// });
+// app.get('/api/v1/login', (req, res) =>{
+//     return res.json({
+//         msg: 'input login'
+//     });
+// });
+// app.get('/api/v1/logout', (req, res) =>{
+//     return res.json({
+//         msg: 'input logout'
+//     });
+// });
+// app.listen(3000, (err) => {
+//     if (err) throw err;
+//     console.log('Server is running...')
+// });
+var authController = require('./controllers/authentication.controller');
+app.use('/signup', authController);
+module.exports = app;
