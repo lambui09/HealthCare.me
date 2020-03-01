@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const {Schema} = mongoose;
 const patientSchema = new Schema({
     phone_number: {
-        type: String,
+        type: Number,
         required: true
     },
     first_name: {

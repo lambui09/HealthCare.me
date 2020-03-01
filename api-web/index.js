@@ -9,6 +9,9 @@ app.get('/', (req, res) => {
         msg: 'aaaa'
     });
 });
+app.post('/login', (req, res) =>{
+
+});
 // app.get('/api/v1/signup', (req, res) =>{
 //     return res.json({
 //         msg: 'input signup'
@@ -24,10 +27,7 @@ app.get('/', (req, res) => {
 //         msg: 'input logout'
 //     });
 // });
-// app.listen(3000, (err) => {
-//     if (err) throw err;
-//     console.log('Server is running...')
-// });
-var authController = require('./controllers/authentication.controller');
-app.use('/signup', authController);
-module.exports = app;
+app.listen(3000, (err) => {
+    if (err) throw err;
+    console.log('Server is running...')
+});
