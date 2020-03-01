@@ -43,7 +43,7 @@ const signUp = async (req, res) => {
                 {success: false, statusCode: 500, errorMessage: error}
             )
         }
-        return res.json({success: false, message: "success", data: newPatient, statusCode: 200})
+        return res.json({success: true, message: "success", data: newPatient, statusCode: 200})
     })
 };
 
