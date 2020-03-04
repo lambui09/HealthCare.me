@@ -49,9 +49,12 @@ const logIn = async (req, res) => {
             return res.json({success: false, errorMessage: "Authentication failed. User not found.", statusCode: 403})
         } else {
             //create token
-            const token = jwt.sign(queryRes, {
-                expiresInMinutes: 1440
+            const token = jwt.sign(queryRes.toJSON(), 'secretKey', {
+                expiresIn: 1440
             });
+
+            console.log(token);
+
             res.json({
                 success: true, data: token, statusCode: 200
             })
