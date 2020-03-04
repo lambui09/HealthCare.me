@@ -11,22 +11,7 @@ const app = express();
  * @param  {object} req HTTP request
  * @param  {object} res HTTP response
  */
-// app.post('/signup', function (req, res){
-//     Patient.create(
-//         {
-//             phone_number : req.body.phone,
-//             password : req.body.pass,
-//             confirm_password : req.body.confirm_password
-//         },
-//         function (err, patient) {
-//             if (err) return res.status(500).json.send("Server have problem");
-//             //create token
-//             var token = jwt.sign({id : user_id});
-//             res.status(200).json.send({auth: true
-//             , token: token})
-//         }
-//     )
-// });
+
 /**
  * // http: /signup
  * @param  {object} req HTTP request
@@ -40,7 +25,7 @@ const signUp = async (req, res) => {
     newPatient.save(function (error) {
         if (error) {
             return res.json(
-                {success: false, statusCode: 500, errorMessage: error}
+                {success: false, errorMessage: error, statusCode: 500,}
             )
         }
         return res.json({success: true, message: "success", data: newPatient, statusCode: 200})
@@ -53,7 +38,25 @@ const signUp = async (req, res) => {
  * @param  {object} res HTTP response
  * */
 const logIn = async (req, res) => {
-
+    //find user in db
+    const queryRes = await Patient.findOne({
+        phone_number: req.body.phone_number
+    }, function (err, queryRes) {
+        if (err) {
+            return res.json({success: false, errorMessage: "server error", statusCode: 500,})
+        }
+        if (!queryRes) {
+            return res.json({success: false, errorMessage: "Authentication failed. User not found.", statusCode: 403})
+        } else {
+            //create token
+            const token = jwt.sign(queryRes, {
+                expiresInMinutes: 1440
+            });
+            res.json({
+                success: true, data: token, statusCode: 200
+            })
+        }
+    })
 };
 module.exports = {
     signUp,
