@@ -4,15 +4,6 @@ const Patient = require('../models/Patient');
 const jwt = require('jsonwebtoken');
 const app = express();
 /**
- * @name signup
- * @description
- * Handle signup user account.
- *
- * @param  {object} req HTTP request
- * @param  {object} res HTTP response
- */
-
-/**
  * // http: /signup
  * @param  {object} req HTTP request
  * @param  {object} res HTTP response
@@ -28,9 +19,11 @@ const signUp = async (req, res) => {
                 {success: false, errorMessage: error, statusCode: 500,}
             )
         }
-        return res.json({success: true, message: "success", data: newPatient, statusCode: 200})
+        return res.json({success: true, data: newPatient, statusCode: 200})
     })
 };
+
+
 
 /**
  * //HTTP : /login
@@ -63,7 +56,10 @@ const logIn = async (req, res) => {
 };
 module.exports = {
     signUp,
-    logIn
+    logIn,
+    resetPassword,
+    logout,
+    logInDoctor
 };
 
 
