@@ -61,7 +61,13 @@ const userSchema = new Schema({
         type: String,
         enum: ['ADMIN','DOCTOR','PATIENT'],
         default: 'PATIENT'
+    },
+    is_exp: {
+        type: String,
+        default: false,
     }
+
+
 }, {timestamp: true});
 module.exports = mongose.model('User', userSchema);
 //0 admin, 1 doctor, 2 patient
