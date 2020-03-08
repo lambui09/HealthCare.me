@@ -34,17 +34,19 @@ const signUp = async (req, res) => {
  * */
 const login = async (req, res) => {
     //find user in db
-    const queryRes = await Patient.findOne({
+    const patient = await Patient.findOne({
         phone_number: req.body.phone_number
-    }, function (err, queryRes) {
+    }, function (err, patient) {
+        //save patient
+        // queryRes = req.user;
         if (err) {
             return res.json({success: false, errorMessage: "server error", statusCode: 500,})
         }
-        if (!queryRes) {
+        if (!patient) {
             return res.json({success: false, errorMessage: "Authentication failed. User not found.", statusCode: 403})
         } else {
             //create token
-            const token = jwt.sign(queryRes.toJSON(), 'secretKey', {
+            const token = jwt.sign(patient.toJSON(), 'secretKey', {
                 expiresIn: 1440
             });
 
@@ -64,21 +66,7 @@ const login = async (req, res) => {
  * */
 const logout = async (req, res) => {
     const errors = {};
-    const userId = req.user._id;
-    let patient = null;
-    try {
-        patient = await Patient.findById(userId)
-    } catch (error) {
-        console.log(error);
-        patient = null;
-    }
-    if (!patient) {
-        errors.error = 'Can not logout. Please try again later!';
-        return res.status(400).json({
-            success: false,
-            errors,
-        })
-    }
+
     try {
         await Patient.findByIdAndUpdate(use._id, {is_exp: true});
     } catch (error) {
