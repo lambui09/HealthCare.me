@@ -26,7 +26,6 @@ const signUp = async (req, res) => {
     })
 };
 
-
 /**
  * //HTTP : /login
  * @param  {object} req HTTP request
@@ -38,7 +37,7 @@ const login = async (req, res) => {
         phone_number: req.body.phone_number
     }, function (err, patient) {
         //save patient
-        // queryRes = req.user;
+        // patient = req.user;
         if (err) {
             return res.json({success: false, errorMessage: "server error", statusCode: 500,})
         }
@@ -46,7 +45,7 @@ const login = async (req, res) => {
             return res.json({success: false, errorMessage: "Authentication failed. User not found.", statusCode: 403})
         } else {
             //create token
-            const token = jwt.sign(patient.toJSON(), 'secretKey', {
+            const token = jwt.sign(patient.toJSON(), process.env.JWT_SECRET_KEY, {
                 expiresIn: 1440
             });
 
@@ -66,8 +65,9 @@ const login = async (req, res) => {
  * */
 const logout = async (req, res) => {
     const errors = {};
-
     try {
+
+        //todo bug chox nayy, use k co data.
         await Patient.findByIdAndUpdate(use._id, {is_exp: true});
     } catch (error) {
         console.log(error);
@@ -100,17 +100,16 @@ const resetPassword = async (req, res) => {
         });
     }
     let patient = null;
-    try{
+    try {
         patient = Patient.findOne({
             phone_number,
         });
-    }catch (error) {
+    } catch (error) {
         console.log(error)
     }
     const resetToken = jwt.sign({
         phone_number
-    }, 'secretKey');
-
+    }, process.env.JWT_SECRET_KEY);
 };
 module.exports = {
     signUp,
