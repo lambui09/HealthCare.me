@@ -46,11 +46,9 @@ const login = async (req, res) => {
         } else {
             //create token
             const token = jwt.sign(patient.toJSON(), process.env.JWT_SECRET_KEY, {
-                expiresIn: 1440
+                expiresIn: process.env.TIME_EXPIRE_TOKEN
             });
-
             console.log(token);
-
             res.json({
                 success: true, data: token, statusCode: 200
             })

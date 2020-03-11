@@ -29,7 +29,7 @@ const passportAuthenticate = (req, res, next) => passport.authenticate('jwt',
         session: false
     }, (err, user, info) => {
         const errors = {};
-        if (err){
+        if (err) {
             console.log(err);
             errors.error = 'ANOTHORIZED_USER';
             return res.status(401).json({
@@ -37,8 +37,8 @@ const passportAuthenticate = (req, res, next) => passport.authenticate('jwt',
                 errors,
             })
         }
-        if (!user){
-            errors.error ='ANOTHORIZED_USER';
+        if (!user) {
+            errors.error = 'ANOTHORIZED_USER';
             return res.status(401).json({
                 success: false,
                 errors,
@@ -47,7 +47,8 @@ const passportAuthenticate = (req, res, next) => passport.authenticate('jwt',
         req.user = user;
         next();
     })(req, res, next);
-module.exports ={
+
+module.exports = {
     passportStrategy,
     passportAuthenticate,
 };
