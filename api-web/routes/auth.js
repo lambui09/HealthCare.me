@@ -3,8 +3,9 @@ const authenticationController = require('../controllers/authentication.controll
 const passport = require('passport');
 
 const router = express.Router();
+
 router.post('/signup', authenticationController.signUp);
 router.post('/login', authenticationController.login);
-router.get('/logout', passport.authenticate('jwt', {session: false}), authenticationController.logout);
+router.get('/logout', passport.authenticate('jwt', { session: false }), authenticationController.logout);
 
 module.exports = router;

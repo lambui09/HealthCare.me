@@ -36,19 +36,18 @@ const login = async (req, res) => {
     const patient = await Patient.findOne({
         phone_number: req.body.phone_number
     }, function (err, patient) {
-        //save patient
-        // patient = req.user;
         if (err) {
             return res.json({success: false, errorMessage: "server error", statusCode: 500,})
         }
         if (!patient) {
             return res.json({success: false, errorMessage: "Authentication failed. User not found.", statusCode: 403})
         } else {
-            //create token
-            const token = jwt.sign(patient.toJSON(), process.env.JWT_SECRET_KEY, {
+            const data = patient.toJSON();
+            const token = jwt.sign({
+                _id: data._id,
+            }, process.env.JWT_SECRET_KEY, {
                 expiresIn: process.env.TIME_EXPIRE_TOKEN
             });
-            console.log(token);
             res.json({
                 success: true, data: token, statusCode: 200
             })
@@ -67,7 +66,7 @@ const logout = async (req, res) => {
     try {
 
         //todo bug chox nayy, use k co data.
-        await Patient.findByIdAndUpdate(use._id, {is_exp: true});
+        await Patient.findByIdAndUpdate(req.user._id, {is_exp: true});
     } catch (error) {
         console.log(error);
         errors.error = 'Can not logout. Please try again later!';
