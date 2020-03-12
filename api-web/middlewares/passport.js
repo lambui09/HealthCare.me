@@ -1,54 +1,21 @@
-const JWTStrategy = require('passport-jwt').Strategy;
-const {ExtractJwt} = require('passport-jwt');
 const passport = require('passport');
-const User = require('../models/User');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const Patient = require('../models/Patient');
+
 const opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts._secretOrKeyProvider = process.env.JWT_SECRET_KEY;
-const passportStrategy = (passportInit) => {
-    passportInit.use(new JWTStrategyotps(opts, async (jwtPayload, done) => {
-        let user = null;
-        try {
-            user = User.findOne({_id: jwtPayload._id, is_exp: false});
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('Bearer');
+opts.secretOrKey = process.env.JWT_SECRET_KEY;
 
-        } catch (error) {
-            console.log(error);
-            return done(null, false)
-
-        }
-        if (!user) {
-            return done(null, false)
-        }
-        return done(null, user)
-
-    }))
-};
-
-const passportAuthenticate = (req, res, next) => passport.authenticate('jwt',
-    {
-        session: false
-    }, (err, user, info) => {
-        const errors = {};
+passport.use('jwt', new JwtStrategy(opts, function (jwt_payload, done) {
+    Patient.findById(jwt_payload._id, function (err, user) {
         if (err) {
-            console.log(err);
-            errors.error = 'ANOTHORIZED_USER';
-            return res.status(401).json({
-                success: false,
-                errors,
-            })
+            return done(err, false);
         }
-        if (!user) {
-            errors.error = 'ANOTHORIZED_USER';
-            return res.status(401).json({
-                success: false,
-                errors,
-            })
+        if (user) {
+            return done(null, user);
+        } else {
+            return done(null, false);
         }
-        req.user = user;
-        next();
-    })(req, res, next);
-
-module.exports = {
-    passportStrategy,
-    passportAuthenticate,
-};
+    });
+}));

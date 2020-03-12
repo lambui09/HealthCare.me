@@ -1,9 +1,11 @@
-const express  = require('express');
+const express = require('express');
 const authenticationController = require('../controllers/authentication.controller');
 const passport = require('passport');
-const Passport = require('../middlewares/passport');
+
 const router = express.Router();
+
 router.post('/signup', authenticationController.signUp);
 router.post('/login', authenticationController.login);
-router.get('/logout', Passport.passportAuthenticate,authenticationController.logout);
+router.get('/logout', passport.authenticate('jwt', { session: false }), authenticationController.logout);
+
 module.exports = router;
