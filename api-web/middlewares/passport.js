@@ -1,54 +1,25 @@
-const JWTStrategy = require('passport-jwt').Strategy;
-const {ExtractJwt} = require('passport-jwt');
-const passport = require('passport');
-const User = require('../models/User');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 const opts = {};
+
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts._secretOrKeyProvider = process.env.JWT_SECRET_KEY;
-const passportStrategy = (passportInit) => {
-    passportInit.use(new JWTStrategyotps(opts, async (jwtPayload, done) => {
-        let user = null;
-        try {
-            user = User.findOne({_id: jwtPayload._id, is_exp: false});
+opts.secretOrKey = process.env.JWT_SECRET_KEY;
 
-        } catch (error) {
-            console.log(error);
-            return done(null, false)
+const PassportStrategy = new JwtStrategy(opts, function (jwt_payload, done) {
+        console.log(jwt_payload);
+        User.findOne({id: jwt_payload.sub}, function (err, user) {
+            if (err) {
+                return done(err, false);
+            }
+            if (user) {
+                return done(null, user);
+            } else {
+                return done(null, false);
+                // or you could create a new account
+            }
+        });
+    });
 
-        }
-        if (!user) {
-            return done(null, false)
-        }
-        return done(null, user)
-
-    }))
-};
-
-const passportAuthenticate = (req, res, next) => passport.authenticate('jwt',
-    {
-        session: false
-    }, (err, user, info) => {
-        const errors = {};
-        if (err) {
-            console.log(err);
-            errors.error = 'ANOTHORIZED_USER';
-            return res.status(401).json({
-                success: false,
-                errors,
-            })
-        }
-        if (!user) {
-            errors.error = 'ANOTHORIZED_USER';
-            return res.status(401).json({
-                success: false,
-                errors,
-            })
-        }
-        req.user = user;
-        next();
-    })(req, res, next);
-
-module.exports = {
-    passportStrategy,
-    passportAuthenticate,
+exports = {
+    PassportStrategy
 };

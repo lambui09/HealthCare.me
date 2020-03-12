@@ -62,6 +62,7 @@ const login = async (req, res) => {
  * @param  {object} res HTTP response
  * */
 const logout = async (req, res) => {
+    console.log(req.user);
     const errors = {};
     try {
 
