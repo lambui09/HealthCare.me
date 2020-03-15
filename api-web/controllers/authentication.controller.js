@@ -4,6 +4,7 @@ const Patient = require('../models/Patient');
 const jwt = require('jsonwebtoken');
 const app = express();
 const validateAuth = require('../validationUtils/auth');
+const _ = require('lodash');
 
 const validateResetPasswordInput = validateAuth.resetPassword();
 /**
@@ -11,7 +12,7 @@ const validateResetPasswordInput = validateAuth.resetPassword();
  * @param  {object} req HTTP request
  * @param  {object} res HTTP response
  * */
-const signUp = async (req, res) => {
+const signup = async (req, res) => {
     const newPatient = new Patient();
     newPatient.phone_number = req.body.phone_number;
     newPatient.password = req.body.password;
@@ -22,7 +23,12 @@ const signUp = async (req, res) => {
                 {success: false, errorMessage: error, statusCode: 500,}
             )
         }
-        return res.json({success: true, data: newPatient, statusCode: 200})
+        const newPatientResponse = newPatient.toObject();
+        const dataPatient = _.omit(newPatientResponse,'password','confirm_password');
+
+        // const newPatientResponse = Patient.findOne(phone_number).select({password: 0, confirm_password: 0});
+        console.log(newPatientResponse);
+        return res.json({success: true, data: dataPatient, statusCode: 200})
     })
 };
 
@@ -64,8 +70,6 @@ const logout = async (req, res) => {
     console.log(req.user);
     const errors = {};
     try {
-
-        //todo bug chox nayy, use k co data.
         await Patient.findByIdAndUpdate(req.user._id, {is_exp: true});
     } catch (error) {
         console.log(error);
@@ -110,7 +114,7 @@ const resetPassword = async (req, res) => {
     }, process.env.JWT_SECRET_KEY);
 };
 module.exports = {
-    signUp,
+    signup,
     login,
     resetPassword,
     logout

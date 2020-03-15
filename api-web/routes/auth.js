@@ -4,7 +4,7 @@ const passport = require('passport');
 
 const router = express.Router();
 
-router.post('/signup', authenticationController.signUp);
+router.post('/signup', authenticationController.signup);
 router.post('/login', authenticationController.login);
 router.get('/logout', passport.authenticate('jwt', { session: false }), authenticationController.logout);
 
