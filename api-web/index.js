@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 require('./config/database');
 const AuthRouter = require('./routes/auth');
+const AppointmentRouter = require('./routes/appointment');
 const bodyParser = require('body-parser');
 require('./middlewares/passport');
 const passport = require('passport');
@@ -18,7 +19,8 @@ app.get('/', (req, res) => {
     });
 });
 
-app.use('/auth', AuthRouter);
+app.use('api/v1/auth', AuthRouter);
+app.use('api/v1/appointments', AppointmentRouter);
 
 app.listen(3000, (err) => {
     if (err) throw err;
