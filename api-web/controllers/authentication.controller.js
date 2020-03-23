@@ -17,14 +17,14 @@ const signup = async (req, res) => {
     newPatient.phone_number = req.body.phone_number;
     newPatient.password = req.body.password;
     newPatient.confirm_password = req.body.confirm_password;
-    newPatient.save(function (error) {
+    await newPatient.save(function (error) {
         if (error) {
             return res.json(
                 {success: false, errorMessage: error, statusCode: 500,}
             )
         }
         const newPatientResponse = newPatient.toObject();
-        const dataPatient = _.omit(newPatientResponse,'password','confirm_password');
+        const dataPatient = _.omit(newPatientResponse, 'password', 'confirm_password');
 
         // const newPatientResponse = Patient.findOne(phone_number).select({password: 0, confirm_password: 0});
         console.log(newPatientResponse);
