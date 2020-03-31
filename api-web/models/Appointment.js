@@ -3,15 +3,15 @@ const {Schema} = mongoose;
 const appointmentSchema = new Schema({
     duration_appointment : {
         type : Number,
-        default : 0
+        default : ""
     },
     price : {
-        type : Number,
-        default: 0
+        type : String,
+        default: ""
     },
     appointment_date:{
         type: Date,
-        default: ""
+        default: Date.now()
     },
     status:{
         type: String,
@@ -19,7 +19,7 @@ const appointmentSchema = new Schema({
     },
     time_remainder_send_notification:{
       type : Number,
-        default : 0
+        default : ""
     }
 }, {timestamp: true});
 module.exports = mongoose.model('Appointment', appointmentSchema);

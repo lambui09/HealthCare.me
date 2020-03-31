@@ -1,7 +1,8 @@
 const express = require('express');
-const authenticationController = require('../controllers/authentication.controller');
+const appointmentController = require('../controllers/appointment.controller');
 const passport = require('passport');
 
 const router = express.Router();
+router.post('/',passport.authenticate('jwt', { session: false }),appointmentController.createAppointment );
 
 module.exports = router;

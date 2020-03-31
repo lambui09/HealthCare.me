@@ -13,14 +13,14 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(passport.initialize());
 
-app.get('/', (req, res) => {
+app.get('/api/v1', (req, res) => {
     return res.json({
         msg: 'aaaa'
     });
 });
 
-app.use('api/v1/auth', AuthRouter);
-app.use('api/v1/appointments', AppointmentRouter);
+app.use('/api/v1/auth', AuthRouter);
+app.use('/api/v1/appointments', AppointmentRouter);
 
 app.listen(3000, (err) => {
     if (err) throw err;
