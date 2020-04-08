@@ -6,8 +6,19 @@ const Patient = require('../models/Patient');
 const Doctor = require('../models/Doctor');
 // const validateAppointment = require('../validationUtils/appointment');
 // const validateCreateAppointment = validateAppointment.createAppointment;
+
 /**
+ * Of Patient
  * router: api/v1/appointments
+ * //commenet het vao day nhe:
+ *
+ * hehe
+ * GetWorkingTime: cai ni ly ra gio lam cua docto day, m truyen len ngay
+ * cho ni: getworking time: la no tra list 30p do ha????
+ * hay khi nao vao la cung hien list 30 san roi:???
+ *
+ *
+ *
  * */
 const createAppointment = async (req, res) => {
     const date = new Date().now;
@@ -51,9 +62,54 @@ const createAppointment = async (req, res) => {
     })
 };
 
+/**
+ * Of Patient
+ * router: api/v1/appointments
+ * */
 const updateAppointment = async (req, res) => {
 
 };
+
+/**
+ * Of Patient
+ * router: api/v1/appointments/
+ * get all appointment
+ * */
+
+const getAllAppointment = async (req, res) => {
+
+};
+
+/**
+ * Of Patient
+ * router: api/v1/appointments/{id}/cancel
+ * */
+const cancelRequestAppointment = async (req, res) => {
+
+};
+
+/**
+ * Of Doctor
+ * router: api/v1/appointments/
+ * */
+const getAllAppointmentOfDoctor = async (req, res) => {
+
+};
+/**
+ * Of Doctor
+ * router: ofdoctor/{id}/status
+ * */
+const updateStatusWhenBookAppointment = async (req, res) => {
+
+};
+/**
+ * Of Doctor
+ * router: api/v1/appointments/{id}
+ * */
+const getDoctorAppointment = async (req, res) => {
+
+};
+
 module.exports = {
     createAppointment,
 };

@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Patient = require('../models/Patient');
+const Doctor = require('../models/Doctor');
 const jwt = require('jsonwebtoken');
 const app = express();
 const validateAuth = require('../validationUtils/auth');
@@ -113,11 +114,38 @@ const resetPassword = async (req, res) => {
         phone_number
     }, process.env.JWT_SECRET_KEY);
 };
+/**
+ * sign up of doctor
+ * http: /signupOfDoctor
+ * */
+
+const signUpDoctor = async (req, res) => {
+    const newDoctor = new Doctor();
+    newDoctor.phone_number = req.body.phone_number;
+    newDoctor.password = req.body.password;
+    newDoctor.confirm_password = req.body.confirm_password;
+    newDoctor.role = "DOCTOR";
+    await newDoctor.save(function (error) {
+        if (error) {
+            return res.json(
+                {success: false, errorMessage: error, statusCode: 500,}
+            )
+        }
+    });
+    const newDoctorResponse = newDoctor.toObject();
+    const dataDoctor = _.omit(newDoctorResponse, 'password', 'confirm_password');
+
+    // const newPatientResponse = Patient.findOne(phone_number).select({password: 0, confirm_password: 0});
+    console.log(newDoctorResponse);
+    return res.json({success: true, data: dataDoctor, statusCode: 200})
+};
+
 module.exports = {
     signup,
     login,
     resetPassword,
-    logout
+    logout,
+    signUpDoctor
 };
 
 
