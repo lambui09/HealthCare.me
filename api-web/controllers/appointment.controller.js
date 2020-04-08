@@ -1,4 +1,3 @@
-const express = require('express');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const Appointment = require('../models/Appointment');
@@ -107,9 +106,36 @@ const updateStatusWhenBookAppointment = async (req, res) => {
  * router: api/v1/appointments/{id}
  * */
 const getDoctorAppointment = async (req, res) => {
-
+    const errors = {};
+    const {AppointmentId} = req.params;
+    let appointment = null;
+    try{
+        appointment = await Appointment.findById(AppointmentId)
+            .populate('owner');
+    }catch (error) {
+        console.log(error);
+        errors.error = 'Can\'t get appointment. Please try again later';
+        return res.status(500).json({
+            success: false,
+            errors,
+        });
+    }
+    if (!appointment){
+        errors.error = 'Can\'t get appointment. Please try again later';
+        return res.status(400).json({
+            success: false,
+            errors,
+        });
+    }
+    return res.status(200).json({
+        success: true,
+        data: {
+            appointment,
+        }
+    })
 };
 
 module.exports = {
     createAppointment,
+    getDoctorAppointment,
 };
