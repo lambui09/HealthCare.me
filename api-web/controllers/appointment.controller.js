@@ -66,7 +66,51 @@ const createAppointment = async (req, res) => {
  * router: api/v1/appointments
  * */
 const updateAppointment = async (req, res) => {
+    const errors = {};
+    const {appointmentId} = req.params;
+    const data = {
+        ...req.body,
+    };
+    let appointmentUpdated = null;
+    try{
+        appointmentUpdated = await Appointment.findByIdAndUpdate(appointmentId, data);
+    }catch (error) {
+        console.log(error);
+        appointmentUpdated = null;
+    }
+    if (!appointmentUpdated){
+        errors.error = 'Can\'t update appointment. Please try again later';
+        return res.status(500).json({
+            success: false,
+            errors,
+        });
+    }
 
+    //check exist appointment
+    let appointment = null;
+    try{
+        appointment = Appointment.findById(appointmentId);
+    }catch (error) {
+        console.log(error);
+        errors.error = 'Can\'t update appointment. Please try again later';
+        return res.status(500).json({
+            success: false,
+            errors,
+        });
+    }
+    if (!appointment){
+        errors.error = 'Can\'t update appointment. Please try again later';
+        return res.status(400).json({
+            success: false,
+            errors,
+        })
+    }
+    return res.status(200).json({
+        success: true,
+        data: {
+            appointmentUpdated,
+        },
+    });
 };
 
 /**
@@ -76,7 +120,43 @@ const updateAppointment = async (req, res) => {
  * */
 
 const getAllAppointment = async (req, res) => {
-
+    const page = +req.query.page || 1;
+    const page_size = 12;
+    const skip = page_size * (page - 1);
+    const limit = page_size;
+    const owner = req.user;
+    let appointments = [];
+    try{
+        appointments = await Appointment.find({
+            owner,
+        })
+            .populate('owner')
+            .skip(skip)
+            .limit(limit);
+    }catch (error) {
+        console.log(error);
+        appointments = [];
+    }
+    let total_appointments = [];
+    try{
+        total_appointments = Appointment.countDocuments();
+    }catch (error) {
+        console.log(error);
+        total_appointments = [];
+    }
+    const total_page = Math.ceil(total_appointments /page_size);
+    return res.status(200).json({
+        success: true,
+        data: {
+            appointments,
+        },
+        meta: {
+            page,
+            page_size: appointments.length,
+            total_page,
+            total_size: total_appointments,
+        }
+    })
 };
 
 /**
@@ -105,6 +185,7 @@ const updateStatusWhenBookAppointment = async (req, res) => {
  * Of Doctor
  * router: api/v1/appointments/{id}
  * */
+
 const getDoctorAppointment = async (req, res) => {
     const errors = {};
     const {AppointmentId} = req.params;
@@ -135,7 +216,17 @@ const getDoctorAppointment = async (req, res) => {
     })
 };
 
+
+/**
+ * how to calculate time free of doctor
+ * doctor
+ * **/
+const calculateTimeFreeDoctor = async (req, res) =>{
+
+};
+
 module.exports = {
     createAppointment,
     getDoctorAppointment,
+    getAllAppointment,
 };

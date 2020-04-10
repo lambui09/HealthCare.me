@@ -5,9 +5,17 @@ const workingScheduleSchema = new Schema({
         type: Date,
         default: Date.now(),
     },
-    hours: {
+    date_work:{
+        type: Date,
+        default: Date.now(),
+    },
+    time_of_a_date:{
         type: String,
-        default: ""
+        default : ""
+    },
+    is_active: {
+        type: Boolean,
+        default: false
     }
 }, {timestamp: true});
 module.exports = mongoose.model('WorkingSchedule', workingScheduleSchema);

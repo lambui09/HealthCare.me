@@ -15,7 +15,7 @@ const userDeviceSchema = new Schema({
     },
     is_active : {
         type: Boolean,
-        default : "",
+        default : false,
     },
     expirationTime : {
         type : Date,
