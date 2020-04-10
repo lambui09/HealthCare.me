@@ -5,13 +5,17 @@ const workingScheduleSchema = new Schema({
         type: Date,
         default: Date.now(),
     },
-    date_work:{
-        type: Date,
-        default: Date.now(),
-    },
-    time_of_a_date:{
+    start_time: {
         type: String,
-        default : ""
+        default: "",
+    },
+    end_Time: {
+        type: String,
+        default: ""
+    },
+    duration_default_appointment:{
+        type: String,
+        default : "30"
     },
     is_active: {
         type: Boolean,

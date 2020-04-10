@@ -16,10 +16,9 @@ const Doctor = require('../models/Doctor');
  * cho ni: getworking time: la no tra list 30p do ha????
  * hay khi nao vao la cung hien list 30 san roi:???
  *
- *
- *
  * */
 const createAppointment = async (req, res) => {
+    const errors = {};
     const date = new Date().now;
     console.log(req);
     const newAppointment = new Appointment({
@@ -35,7 +34,8 @@ const createAppointment = async (req, res) => {
     try {
         appointmentCreated = await newAppointment.save();
     } catch (error) {
-        console.error = 'Can not create new appointment. Please try again later';
+        console.log(error);
+        errors.error = 'Can not create new appointment. Please try again later';
         return res.status(500).json(
             {
                 success: false,
