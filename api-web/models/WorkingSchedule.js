@@ -5,6 +5,10 @@ const workingScheduleSchema = new Schema({
         type: Date,
         default: Date.now(),
     },
+    end_date: {
+        type: Date,
+        default: Date.now()
+    },
     start_time: {
         type: String,
         default: "",
@@ -12,6 +16,10 @@ const workingScheduleSchema = new Schema({
     end_Time: {
         type: String,
         default: ""
+    },
+    list_time: {
+        type: String,
+        default: "",
     },
     duration_default_appointment:{
         type: String,

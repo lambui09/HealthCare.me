@@ -7,27 +7,21 @@ const doctorSchema = new Schema({
     },
     first_name: {
         type: String,
-        required: true
     },
     last_name: {
         type: String,
-        required: true
     },
     password: {
         type: String,
-        required: true
     },
     confirm_password: {
         type: String,
-        required: true
     },
     birth_day: {
         type: Number,
-        required: true
     },
     gender: {
         type: String,
-        required: true,
         enum: ["MALE", "FEMALE"]
     },
     avatar: {
@@ -36,17 +30,14 @@ const doctorSchema = new Schema({
     },
     address: {
         type: String,
-        required: true
     },
     location: {
         type: {
             type: String,
             enum: ["POINT"],
-            required: true
         },
         coordinates: {
             type: [Number],
-            required: true
         }
     },
     is_active: {

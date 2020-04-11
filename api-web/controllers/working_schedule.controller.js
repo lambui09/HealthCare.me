@@ -11,8 +11,18 @@ const createDateWorkingDoctor = async (req, res) => {
     });
     workingSchedule.from_date = req.from_date;
     workingSchedule.start_time = req.start_time;
-    workingSchedule.end_Time = req.end_Time;
+    workingSchedule.end_time = req.end_time;
     workingSchedule.duration_default_appointment = req.duration_default_appointment;
+    let startTime= workingSchedule.start_time;
+    let end_Time= workingSchedule.end_time;
+    let duration_appointment = workingSchedule.duration_default_appointment;
+    var list_time_working_a_date = [];
+    if (end_Time > startTime){
+        list_time_working_a_date = range(end_Time,startTime,duration_appointment);
+    }
+    if (list_time_working_a_date.length > 0){
+        workingSchedule.list_time = list_time_working_a_date;
+    }
     console.log(workingSchedule);
     let workingScheduleCreated = null;
     try {
@@ -99,11 +109,22 @@ const changeTimeDuration = async (req, res) => {
  *
  * */
 const getWorkingSchedule = async (req, res) => {
-    const data_work = req.params
+    const {doctor_id} = req.params;
+    const errors = {};
+    let list_hours = [];
+    try{
 
 
 
+    }catch (error) {
+        console.log(error);
+        errors.error = 'Can\'t ..............'
+    }
 };
+function range(start, end, step = 1) {
+    const len = Math.floor((end - start) / step) + 1;
+    return Array(len).fill().map((_, idx) => start + (idx * step))
+}
 module.exports = {
     createDateWorkingDoctor,
     changeTimeDuration,

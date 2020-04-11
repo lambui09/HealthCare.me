@@ -140,12 +140,58 @@ const signUpDoctor = async (req, res) => {
     return res.json({success: true, data: dataDoctor, statusCode: 200})
 };
 
+const loginDoctor = async (req, res) =>{
+    const doctor = await Doctor.findOne({
+        phone_number: req.body.phone_number
+    }, function (err, doctor) {
+        if (err) {
+            return res.json({success: false, errorMessage: "server error", statusCode: 500,})
+        }
+        if (!doctor) {
+            return res.json({success: false, errorMessage: "Authentication failed. User not found.", statusCode: 403})
+        } else {
+            const data = doctor.toJSON();
+            const token = jwt.sign({
+                _id: data._id,
+            }, process.env.JWT_SECRET_KEY, {
+                expiresIn: process.env.TIME_EXPIRE_TOKEN,
+            });
+            res.json({
+                success: true, data: token, statusCode: 200
+            })
+        }
+    })
+};
+const logoutDoctor = async (req, res) => {
+    console.log(req.user);
+    const errors = {};
+    try {
+        await Doctor.findByIdAndUpdate(req.user._id, {is_exp: true});
+    } catch (error) {
+        console.log(error);
+        errors.error = 'Can not logout. Please try again later!';
+        return res.status(500).json({
+            success: false,
+            errors,
+        });
+    }
+    return res.status(200).json({
+        success: true,
+        data: {
+            notify: 'Logout successfully',
+        }
+    })
+};
+
 module.exports = {
     signup,
     login,
     resetPassword,
     logout,
-    signUpDoctor
+    signUpDoctor,
+    loginDoctor,
+    logoutDoctor,
+
 };
 
 
