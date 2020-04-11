@@ -47,7 +47,7 @@ const createDateWorkingDoctor = async (req, res) => {
  * create data time in a week for doctor
  * */
 
-const setTimeDuration = async (req, res) => {
+const changeTimeDuration = async (req, res) => {
     const errors = {};
     const {working_schedule_doctor_Id} = req.params;
     const data = {
@@ -99,6 +99,13 @@ const setTimeDuration = async (req, res) => {
  *
  * */
 const getWorkingSchedule = async (req, res) => {
+    const data_work = req.params
 
 
+
+};
+module.exports = {
+    createDateWorkingDoctor,
+    changeTimeDuration,
+    getWorkingSchedule
 };
