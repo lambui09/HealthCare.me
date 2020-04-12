@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const {Schema} = mongoose;
+const {
+    Schema
+} = mongoose;
 const doctorSchema = new Schema({
     phone_number: {
         type: String,
@@ -9,12 +11,6 @@ const doctorSchema = new Schema({
         type: String,
     },
     last_name: {
-        type: String,
-    },
-    password: {
-        type: String,
-    },
-    confirm_password: {
         type: String,
     },
     birth_day: {
@@ -48,11 +44,6 @@ const doctorSchema = new Schema({
         type: Boolean,
         default: false
     },
-    role: {
-        type: String,
-        enum: ['ADMIN','DOCTOR','PATIENT'],
-        default: 'PATIENT'
-    },
     medical_doctor: {
         type: String,
         default: ""
@@ -69,9 +60,15 @@ const doctorSchema = new Schema({
         type: Number,
         default: 0
     },
-    working_schedule:{
-       type: mongoose.Schema.Types.ObjectId,
+    working_schedule: {
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'WorkingSchedule'
+    },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
-}, {timestamp: true});
+}, {
+    timestamp: true
+});
 module.exports = mongoose.model("Doctor", doctorSchema);

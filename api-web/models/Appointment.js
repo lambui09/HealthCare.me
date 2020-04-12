@@ -22,11 +22,11 @@ const appointmentSchema = new Schema({
         default : ""
     },
     doctor : {
-        type: mongoose.Schema.types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Doctor'
     },
     patient_book:{
-        type: mongoose.Schema.types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Patient'
     }
 }, {timestamp: true});
