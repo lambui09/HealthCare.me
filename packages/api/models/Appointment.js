@@ -2,37 +2,42 @@ const mongoose = require('mongoose');
 const {
     Schema
 } = mongoose;
+
 const appointmentSchema = new Schema({
-    duration_appointment: {
-        type: Number,
-        default: ""
-    },
     price: {
-        type: String,
-        default: ""
+        type: Number,
+        default: 0
     },
-    appointment_date: {
+    date: {
         type: Date,
-        default: Date.now()
+        required: true,
     },
-    appointment_time: {
+    time: {
         type: String,
+        required: true,
+    },
+    duration: {
+        type: Number,
+        default: 30
     },
     status: {
         type: String,
-        enum: ['PENDING', 'COMPLETED', 'CONFIRMED', 'CANCELED']
+        enum: ['PENDING', 'COMPLETED', 'CONFIRMED', 'CANCELED'],
+        default: 'PENDING'
     },
     time_remainder_send_notification: {
         type: Number,
-        default: ""
+        default: 30
     },
     doctor_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Doctor'
+        ref: 'Doctor',
+        required: true,
     },
-    patient_book: {
+    patient_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Patient'
+        ref: 'Patient',
+        required: true,
     }
 }, {
     timestamp: true

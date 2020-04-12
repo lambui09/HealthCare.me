@@ -3,6 +3,14 @@ const appointmentController = require('../controllers/appointment.controller');
 const passport = require('passport');
 
 const router = express.Router();
-router.post('/',passport.authenticate('jwt', { session: false }),appointmentController.createAppointment );
+router.post('/', passport.authenticate('jwt', {
+    session: false
+}), appointmentController.createAppointment);
+router.get('/', passport.authenticate('jwt', {
+    session: false
+}), appointmentController.getListAppointment);
+router.patch('/:appointment_id', passport.authenticate('jwt', {
+    session: false
+}), appointmentController.updateAppointment);
 
 module.exports = router;
