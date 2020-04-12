@@ -35,7 +35,7 @@ const signup = async (req, res) => {
         });
     }
 
-    const Model = role === 'DOCTOR' ? Docker : Patient;
+    const Model = role === 'DOCTOR' ? Doctor : Patient;
     const newModel = new Model();
     newUser.phone_number = phone_number;
 
