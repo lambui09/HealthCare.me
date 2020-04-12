@@ -2,9 +2,6 @@ const lodash = require('lodash');
 const Working_schedule_doctor = require('../models/WorkingSchedule');
 const Appointment = require('../models/Appointment');
 
-/**
- * create time duration for doctor
- * */
 const createDateWorkingDoctor = async (req, res) => {
     const errors = {};
     const workingSchedule = new Working_schedule_doctor({
@@ -52,10 +49,6 @@ const createDateWorkingDoctor = async (req, res) => {
     })
 };
 
-/**
- * create data time in a week for doctor
- * */
-
 const changeTimeDuration = async (req, res) => {
     const errors = {};
     const {
@@ -101,10 +94,6 @@ const changeTimeDuration = async (req, res) => {
     });
 };
 
-/**
- *
- *
- * */
 const getWorkingSchedule = async (req, res) => {
     const {
         working_doctor_id
