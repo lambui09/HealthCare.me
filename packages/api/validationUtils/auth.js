@@ -1,5 +1,5 @@
 const validator = require('validator');
-const isEmpty = require('../validationUtils/is_empty');
+const isEmpty = require('./is_empty');
 const resetPassword = (data) => {
     const errors = {};
     const value = {
