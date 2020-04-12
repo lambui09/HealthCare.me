@@ -164,6 +164,7 @@ const loginDoctor = async (req, res) =>{
 };
 const logoutDoctor = async (req, res) => {
     console.log(req.user);
+    console.log(req.user._id);
     const errors = {};
     try {
         await Doctor.findByIdAndUpdate(req.user._id, {is_exp: true});
@@ -175,6 +176,7 @@ const logoutDoctor = async (req, res) => {
             errors,
         });
     }
+    console.log(Doctor.findByIdAndUpdate(req.user._id, {is_exp: true}));
     return res.status(200).json({
         success: true,
         data: {
@@ -191,7 +193,6 @@ module.exports = {
     signUpDoctor,
     loginDoctor,
     logoutDoctor,
-
 };
 
 

@@ -20,6 +20,14 @@ const appointmentSchema = new Schema({
     time_remainder_send_notification:{
       type : Number,
         default : ""
+    },
+    doctor : {
+        type: mongoose.Schema.types.ObjectId,
+        ref: 'Doctor'
+    },
+    patient_book:{
+        type: mongoose.Schema.types.ObjectId,
+        ref: 'Patient'
     }
 }, {timestamp: true});
 module.exports = mongoose.model('Appointment', appointmentSchema);

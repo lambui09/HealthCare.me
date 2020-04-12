@@ -68,6 +68,10 @@ const doctorSchema = new Schema({
     year_experience: {
         type: Number,
         default: 0
+    },
+    working_schedule:{
+       type: mongoose.Schema.Types.ObjectId,
+        ref: 'WorkingSchedule'
     }
 }, {timestamp: true});
 module.exports = mongoose.model("Doctor", doctorSchema);

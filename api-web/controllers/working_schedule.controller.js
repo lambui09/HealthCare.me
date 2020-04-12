@@ -109,13 +109,12 @@ const changeTimeDuration = async (req, res) => {
  *
  * */
 const getWorkingSchedule = async (req, res) => {
-    const {doctor_id} = req.params;
+    const {working_doctor_id} = req.params;
     const errors = {};
     let list_hours = [];
+    let working_schedule = null;
     try{
-
-
-
+        working_schedule = Working_schedule_doctor.fin
     }catch (error) {
         console.log(error);
         errors.error = 'Can\'t ..............'
