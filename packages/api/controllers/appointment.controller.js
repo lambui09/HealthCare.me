@@ -27,7 +27,7 @@ const createAppointment = async (req, res) => {
         newAppointment.date = moment(date);
         newAppointment.time = time;
         newAppointment.doctor_id = doctor_id;
-        newAppointment.appointment_id = user._id;
+        newAppointment.patient_id = user._id;
         const appointmentCreated = await newAppointment.save();
         return res.json({
             success: true,

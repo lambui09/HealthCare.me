@@ -5,27 +5,27 @@ const {
 const workingScheduleSchema = new Schema({
     from_date: {
         type: Date,
-        default: Date.now(),
+        required: true,
     },
     end_date: {
         type: Date,
-        default: Date.now()
+        required: true,
     },
     start_time: {
         type: String,
-        default: "",
+        required: true,
     },
-    end_Time: {
+    end_time: {
         type: String,
-        default: ""
+        required: true,
     },
     list_time: {
         type: [String],
         default: [],
     },
     duration_default_appointment: {
-        type: String,
-        default: "30"
+        type: Number,
+        default: 30,
     },
     is_active: {
         type: Boolean,
@@ -33,7 +33,8 @@ const workingScheduleSchema = new Schema({
     },
     doctor_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Doctor'
+        ref: 'Doctor',
+        required: true,
     }
 }, {
     timestamp: true

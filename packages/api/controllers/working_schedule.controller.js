@@ -1,170 +1,124 @@
-const lodash = require('lodash');
-const Working_schedule_doctor = require('../models/WorkingSchedule');
+const moment = require('moment');
+const WorkingSchedule = require('../models/WorkingSchedule');
 const Appointment = require('../models/Appointment');
 
-const createDateWorkingDoctor = async (req, res) => {
-    const errors = {};
-    const workingSchedule = new Working_schedule_doctor({
-        owner: req.user.id
-    });
-    workingSchedule.from_date = req.from_date;
-    workingSchedule.start_time = req.start_time;
-    workingSchedule.end_time = req.end_time;
-    workingSchedule.duration_default_appointment = req.duration_default_appointment;
-    let startTime = workingSchedule.start_time;
-    let end_Time = workingSchedule.end_time;
-    let duration_appointment = workingSchedule.duration_default_appointment;
-    var list_time_working_a_date = [];
-    if (end_Time > startTime) {
-        list_time_working_a_date = range(end_Time, startTime, duration_appointment);
-    }
-    if (list_time_working_a_date.length > 0) {
-        workingSchedule.list_time = list_time_working_a_date;
-    }
-    console.log(workingSchedule);
-    let workingScheduleCreated = null;
-    try {
-        workingScheduleCreated = await workingSchedule.save()
-    } catch (error) {
-        console.log(workingSchedule);
-        errors.error = 'Can not create new working time doctor. Please try again later';
-        return res.status(500).json({
-            success: false,
-            errors,
-        })
-    }
-    if (!workingScheduleCreated) {
-        errors.error = 'Can not create new working time doctor, Please try again later';
-        return res.status(400).json({
-            success: false,
-            errors,
-        })
-    }
-    console.log(workingScheduleCreated);
-    return res.status(200).json({
-        success: true,
-        data: {
-            workingScheduleCreated,
+const createWorkingSchedule = async (req, res) => {
+    const {
+        user: {
+            user_id
         }
-    })
+    } = req;
+    const {
+        from_date,
+        end_date,
+        start_time,
+        end_time,
+        duration_default_appointment
+    } = req.body;
+    const newWorkingSchedule = new WorkingSchedule();
+    if (duration_default_appointment) {
+        newWorkingSchedule.duration_default_appointment = duration_default_appointment;
+    }
+    newWorkingSchedule.doctor_id = user_id;
+    newWorkingSchedule.from_date = moment(from_date);
+    newWorkingSchedule.end_date = moment(end_date);
+    newWorkingSchedule.start_time = start_time;
+    newWorkingSchedule.end_time = end_time;
+    newWorkingSchedule.list_time = rangeTime(start_time, end_time, duration_default_appointment);
+
+    try {
+        await newWorkingSchedule.save();
+        return res.json({
+            success: true,
+            data: newWorkingSchedule,
+            statusCode: 200,
+        })
+    } catch (error) {
+        return res.json({
+            success: false,
+            errorMessage: 'Server err',
+            statusCode: 500,
+        })
+    }
 };
 
-const changeTimeDuration = async (req, res) => {
-    const errors = {};
+const getAvailableTime = async (req, res) => {
     const {
-        working_schedule_doctor_Id
-    } = req.params;
-    const data = {
-        ...req.body,
-    };
-    let workingTimeUpdated = null;
-    try {
-        workingTimeUpdated = await Working_schedule_doctor.findByIdAndUpdate(working_schedule_doctor_Id, data)
-    } catch (error) {
-        console.log(error);
-        workingTimeUpdated = null
-    }
-
-    if (!workingTimeUpdated) {
-        errors.error = 'Can\'t update working time doctor. Please try again later';
-        return res.status(400).json({
-            success: false,
-            errors,
-        }, );
-    }
-    let workingScheduleDoctor = null;
-    try {
-        workingScheduleDoctor = await Working_schedule_doctor.findById(working_schedule_doctor_Id);
-    } catch (error) {
-        console.log(error);
-        workingScheduleDoctor = null;
-    }
-    if (!workingScheduleDoctor) {
-        errors.error = 'Can\'t update tour. Please try again later';
-        return res.status(400).json({
-            success: false,
-            errors,
-        }, );
-    }
-    return res.status(200).json({
-        success: true,
-        data: {
-            workingScheduleDoctorUpdate: workingScheduleDoctor,
-        },
-    });
-};
-
-const getWorkingSchedule = async (req, res) => {
-    const {
-        working_doctor_id
+        doctor_id
     } = req.params;
     const {
         date
     } = req.query;
-    const errors = {};
     let working_schedule;
     try {
-        working_schedule = Working_schedule_doctor.findOne({
-            doctor_id: working_doctor_id,
+        working_schedule = await WorkingSchedule.findOne({
+            doctor_id,
             from_date: {
-                '$lte': date,
+                '$lte': moment(date),
             },
             end_date: {
-                '$gte': date,
+                '$gte': moment(date),
             }
         });
-    } catch (error) {
-        console.log(error);
-        errors.error = 'Can\'t ..............'
-        return res.status(500).json({
-            success: false,
-            errors,
-        });
-    }
-
-    const list_time = working_schedule.list_time;
-    try {
-        const list_appointment = Appointment.find({
-            doctor_id: working_doctor_id,
-            appointment_date: date,
+        if (!working_schedule) {
+            return res.json({
+                success: true,
+                data: [],
+                statusCode: 200,
+            });
+        }
+        const list_time = working_schedule.list_time;
+        const list_time_booked = await Appointment.find({
+            doctor_id,
+            date: moment(date),
             status: {
                 '$ne': 'CANCELED'
             }
+        }).select({
+            time: 1
         });
-
-        const list_time_booked = list_appointment.map(app => app.appointment_time);
 
         const list_time_available = list_time.map(time => {
             return {
                 time,
-                status: !!list_time_booked.find(time)
+                status: !!list_time_booked.find(item => item.time === time)
             }
         });
 
-        return res.status(200).json({
+        return res.json({
             success: true,
-            data: {
-                listTime: list_time_available,
-            },
+            data: list_time_available,
+            statusCode: 200,
         });
-
     } catch (error) {
-        console.log(error);
-        errors.error = 'Can\'t ..............'
-        return res.status(500).json({
+        return res.json({
             success: false,
-            errors,
+            errorMessage: 'Server error',
+            statusCode: 500,
         });
     }
-
 };
 
-function range(start, end, step = 1) {
-    const len = Math.floor((end - start) / step) + 1;
-    return Array(len).fill().map((_, idx) => start + (idx * step))
+function rangeTime(start, end, step = 30) {
+    const startArr = start.split(':');
+    const endArr = end.split(':');
+    let startHour = +startArr[0];
+    let startMinute = +startArr[1];
+    let endHour = +endArr[0];
+    let endMinute = +endArr[1];
+    const data = [];
+    while (!(startHour === endHour && startMinute === endMinute)) {
+        startMinute += step;
+        if (startMinute === 60) {
+            startHour++;
+            startMinute = 0;
+        }
+        const time = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}`;
+        data.push(time);
+    }
+    return data;
 }
 module.exports = {
-    createDateWorkingDoctor,
-    changeTimeDuration,
-    getWorkingSchedule
+    createWorkingSchedule,
+    getAvailableTime
 };
