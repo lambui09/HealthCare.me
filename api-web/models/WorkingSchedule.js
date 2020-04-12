@@ -18,8 +18,8 @@ const workingScheduleSchema = new Schema({
         default: ""
     },
     list_time: {
-        type: String,
-        default: "",
+        type: [String],
+        default: [],
     },
     duration_default_appointment:{
         type: String,

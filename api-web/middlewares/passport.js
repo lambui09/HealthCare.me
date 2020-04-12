@@ -3,30 +3,31 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const Patient = require('../models/Patient');
 const Doctor = require('../models/Doctor');
+const User = require('../models/Doctor');
 
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('Bearer');
 opts.secretOrKey = process.env.JWT_SECRET_KEY;
 
-passport.use('jwt', new JwtStrategy(opts, function (jwt_payload, done) {
-    Patient.findById(jwt_payload._id, function (err, user) {
-        if (err) {
-            return done(err, false);
+passport.use('jwt', new JwtStrategy(opts, async (jwt_payload, done) => {
+    let user;
+    try {
+        user = await User.findById(jwt_payload._id);
+        if (!user) {
+            throw new Error('User not found!');
         }
-        if (user) {
-            return done(null, user);
-        } else {
-            return done(null, false);
-        }
-    });
-    // Doctor.findById(jwt_payload._id, function (error, user) {
-    //     if (error) {
-    //         return done(error, false);
-    //     }
-    //     if (user) {
-    //         return done(null, user);
-    //     } else {
-    //         return done(null, false);
-    //     }
-    // });
+    } catch (error) {
+        return done(err, false);
+    }
+
+    const Model = user.role === 'DOCTOR' ? Doctor : Patient;
+
+    try {
+        const userRole = await Model.findOne({
+            user_id: user._id
+        });
+        return done(err, userRole);
+    } catch (error) {
+        return done(err, false);
+    }
 }));

@@ -11,14 +11,6 @@ const patientSchema = new Schema({
     last_name: {
         type: String,
     },
-    password: {
-        type: String,
-        required: true
-    },
-    confirm_password: {
-        type: String,
-        required: true
-    },
     birth_day: {
         type: Number,
     },
@@ -49,11 +41,6 @@ const patientSchema = new Schema({
     is_complete: {
         type: Boolean,
         default: false
-    },
-    role: {
-        type: String,
-        enum: ['ADMIN','DOCTOR','PATIENT'],
-        default: 'PATIENT'
     },
     push_notification_enabled: {
         type: Boolean,

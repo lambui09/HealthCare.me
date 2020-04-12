@@ -1,9 +1,7 @@
-const express = require('express');
-const mongoose = require('mongoose');
+const User = require('../models/User');
 const Patient = require('../models/Patient');
 const Doctor = require('../models/Doctor');
 const jwt = require('jsonwebtoken');
-const app = express();
 const validateAuth = require('../validationUtils/auth');
 const _ = require('lodash');
 
@@ -14,22 +12,47 @@ const validateResetPasswordInput = validateAuth.resetPassword();
  * @param  {object} res HTTP response
  * */
 const signup = async (req, res) => {
-    const newPatient = new Patient();
-    newPatient.phone_number = req.body.phone_number;
-    newPatient.password = req.body.password;
-    newPatient.confirm_password = req.body.confirm_password;
-    await newPatient.save(function (error) {
-        if (error) {
-            return res.json(
-                {success: false, errorMessage: error, statusCode: 500,}
-            )
-        }
-        const newPatientResponse = newPatient.toObject();
-        const dataPatient = _.omit(newPatientResponse, 'password', 'confirm_password');
+    const {
+        phone_number,
+        password,
+        confirm_password,
+        role,
+    } = req.body;
 
-        // const newPatientResponse = Patient.findOne(phone_number).select({password: 0, confirm_password: 0});
-        console.log(newPatientResponse);
-        return res.json({success: true, data: dataPatient, statusCode: 200})
+    const newUser = new User();
+    newUser.phone_number = phone_number;
+    newUser.password = password;
+    newUser.confirm_password = confirm_password;
+    newUser.role = role;
+
+    try {
+        await newUser.save();
+    } catch (error) {
+        return res.json({
+            success: false,
+            errorMessage: error,
+            statusCode: 500,
+        });
+    }
+
+    const Model = role === 'DOCTOR' ? Doctor : Patient;
+    const newModel = new Model();
+    newUser.phone_number = phone_number;
+
+    try {
+        await newModel.save();
+    } catch (error) {
+        return res.json({
+            success: false,
+            errorMessage: error,
+            statusCode: 500,
+        });
+    }
+
+    return res.json({
+        success: true,
+        data: newModel,
+        statusCode: 200
     })
 };
 
@@ -39,27 +62,45 @@ const signup = async (req, res) => {
  * @param  {object} res HTTP response
  * */
 const login = async (req, res) => {
-    //find user in db
-    const patient = await Patient.findOne({
-        phone_number: req.body.phone_number
-    }, function (err, patient) {
-        if (err) {
-            return res.json({success: false, errorMessage: "server error", statusCode: 500,})
-        }
-        if (!patient) {
-            return res.json({success: false, errorMessage: "Authentication failed. User not found.", statusCode: 403})
-        } else {
-            const data = patient.toJSON();
-            const token = jwt.sign({
-                _id: data._id,
-            }, process.env.JWT_SECRET_KEY, {
-                expiresIn: process.env.TIME_EXPIRE_TOKEN,
-            });
-            res.json({
-                success: true, data: token, statusCode: 200
+    const {
+        phone_number
+    } = req.body;
+
+    try {
+        const user = await User.findOne({
+            phone_number: phone_number
+        });
+
+        if (!user) {
+            return res.json({
+                success: false,
+                errorMessage: "Authentication failed. User not found.",
+                statusCode: 403
             })
         }
-    })
+
+        const data = user.toJSON();
+        const token = jwt.sign(
+            {
+                _id: data._id,
+            },
+            process.env.JWT_SECRET_KEY,
+            {
+                expiresIn: process.env.TIME_EXPIRE_TOKEN,
+            }
+        );
+        res.json({
+            success: true,
+            data: token,
+            statusCode: 200
+        })
+    } catch (error) {
+        return res.json({
+            success: false,
+            errorMessage: "server error",
+            statusCode: 500,
+        });
+    }
 };
 
 /**
@@ -68,12 +109,12 @@ const login = async (req, res) => {
  * @param  {object} res HTTP response
  * */
 const logout = async (req, res) => {
-    console.log(req.user);
     const errors = {};
     try {
-        await Patient.findByIdAndUpdate(req.user._id, {is_exp: true});
+        await User.findByIdAndUpdate(req.user.user_id, {
+            is_exp: true
+        });
     } catch (error) {
-        console.log(error);
         errors.error = 'Can not logout. Please try again later!';
         return res.status(500).json({
             success: false,
@@ -102,9 +143,9 @@ const resetPassword = async (req, res) => {
             errors,
         });
     }
-    let patient = null;
+    let user = null;
     try {
-        patient = Patient.findOne({
+        user = User.findOne({
             phone_number,
         });
     } catch (error) {
@@ -127,9 +168,11 @@ const signUpDoctor = async (req, res) => {
     newDoctor.role = "DOCTOR";
     await newDoctor.save(function (error) {
         if (error) {
-            return res.json(
-                {success: false, errorMessage: error, statusCode: 500,}
-            )
+            return res.json({
+                success: false,
+                errorMessage: error,
+                statusCode: 500,
+            })
         }
     });
     const newDoctorResponse = newDoctor.toObject();
@@ -137,18 +180,30 @@ const signUpDoctor = async (req, res) => {
 
     // const newPatientResponse = Patient.findOne(phone_number).select({password: 0, confirm_password: 0});
     console.log(newDoctorResponse);
-    return res.json({success: true, data: dataDoctor, statusCode: 200})
+    return res.json({
+        success: true,
+        data: dataDoctor,
+        statusCode: 200
+    })
 };
 
-const loginDoctor = async (req, res) =>{
+const loginDoctor = async (req, res) => {
     const doctor = await Doctor.findOne({
         phone_number: req.body.phone_number
     }, function (err, doctor) {
         if (err) {
-            return res.json({success: false, errorMessage: "server error", statusCode: 500,})
+            return res.json({
+                success: false,
+                errorMessage: "server error",
+                statusCode: 500,
+            })
         }
         if (!doctor) {
-            return res.json({success: false, errorMessage: "Authentication failed. User not found.", statusCode: 403})
+            return res.json({
+                success: false,
+                errorMessage: "Authentication failed. User not found.",
+                statusCode: 403
+            })
         } else {
             const data = doctor.toJSON();
             const token = jwt.sign({
@@ -157,7 +212,9 @@ const loginDoctor = async (req, res) =>{
                 expiresIn: process.env.TIME_EXPIRE_TOKEN,
             });
             res.json({
-                success: true, data: token, statusCode: 200
+                success: true,
+                data: token,
+                statusCode: 200
             })
         }
     })
@@ -167,7 +224,9 @@ const logoutDoctor = async (req, res) => {
     console.log(req.user._id);
     const errors = {};
     try {
-        await Doctor.findByIdAndUpdate(req.user._id, {is_exp: true});
+        await Doctor.findByIdAndUpdate(req.user._id, {
+            is_exp: true
+        });
     } catch (error) {
         console.log(error);
         errors.error = 'Can not logout. Please try again later!';
@@ -176,7 +235,9 @@ const logoutDoctor = async (req, res) => {
             errors,
         });
     }
-    console.log(Doctor.findByIdAndUpdate(req.user._id, {is_exp: true}));
+    console.log(Doctor.findByIdAndUpdate(req.user._id, {
+        is_exp: true
+    }));
     return res.status(200).json({
         success: true,
         data: {
@@ -194,7 +255,3 @@ module.exports = {
     loginDoctor,
     logoutDoctor,
 };
-
-
-
-
