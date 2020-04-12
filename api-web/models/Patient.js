@@ -3,7 +3,7 @@ const {Schema} = mongoose;
 const patientSchema = new Schema({
     phone_number: {
         type: String,
-        required: true
+        required: true,
     },
     first_name: {
         type: String,
@@ -49,6 +49,10 @@ const patientSchema = new Schema({
     unseen_notification_count: {
         type: Number,
         default: 0
+    },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 }, {timestamp: true});
 module.exports =mongoose.model("Patient", patientSchema);

@@ -5,7 +5,7 @@ const {
 const doctorSchema = new Schema({
     phone_number: {
         type: String,
-        required: true
+        required: true,
     },
     first_name: {
         type: String,
@@ -67,7 +67,7 @@ const doctorSchema = new Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
 }, {
     timestamp: true
 });

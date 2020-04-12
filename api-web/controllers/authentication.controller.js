@@ -37,7 +37,7 @@ const signup = async (req, res) => {
 
     const Model = role === 'DOCTOR' ? Doctor : Patient;
     const newModel = new Model();
-    newUser.phone_number = phone_number;
+    newModel.phone_number = phone_number;
 
     try {
         await newModel.save();

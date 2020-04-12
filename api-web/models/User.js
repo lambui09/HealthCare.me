@@ -1,17 +1,16 @@
-const mongose = require('mongoose');
-const {Schema} = mongose;
+const mongoose = require('mongoose');
+const {Schema} = mongoose;
 const userSchema = new Schema({
     phone_number: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     first_name: {
         type: String,
-        required: true
     },
     last_name: {
         type: String,
-        required: true
     },
     password: {
         type: String,
@@ -23,11 +22,9 @@ const userSchema = new Schema({
     },
     birth_day: {
         type: Number,
-        required: true
     },
     gender: {
         type: String,
-        required: true,
         enum: ["MALE", "FEMALE"]
     },
     avatar: {
@@ -36,17 +33,14 @@ const userSchema = new Schema({
     },
     address: {
         type: String,
-        required: true
     },
     location: {
         type: {
             type: String,
             enum: ["POINT"],
-            required: true
         },
         coordinates: {
             type : [Number],
-            required: true
         }
     },
     is_active : {
@@ -65,11 +59,9 @@ const userSchema = new Schema({
     is_exp: {
         type: String,
         default: false,
-    }
-
-
+    },
 }, {timestamp: true});
-module.exports = mongose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema);
 //0 admin, 1 doctor, 2 patient
 
 
