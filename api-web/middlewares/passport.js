@@ -3,7 +3,7 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const Patient = require('../models/Patient');
 const Doctor = require('../models/Doctor');
-const User = require('../models/Doctor');
+const User = require('../models/User');
 
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('Bearer');
@@ -29,7 +29,7 @@ passport.use('jwt', new JwtStrategy(opts, async (jwt_payload, done) => {
         if (!userRole) {
             throw new Error('User not found!');
         }
-        return done(error, userRole);
+        return done(null, userRole);
     } catch (error) {
         return done(error, false);
     }

@@ -3,31 +3,31 @@ const {Schema} = mongose;
 const userSchema = new Schema({
     phone_number: {
         type: String,
-        required: true
+        required: false
     },
     first_name: {
         type: String,
-        required: true
+        required: false
     },
     last_name: {
         type: String,
-        required: true
+        required: false
     },
     password: {
         type: String,
-        required: true
+        required: false
     },
     confirm_password: {
         type: String,
-        required: true
+        required: false
     },
     birth_day: {
         type: Number,
-        required: true
+        required: false
     },
     gender: {
         type: String,
-        required: true,
+        required: false,
         enum: ["MALE", "FEMALE"]
     },
     avatar: {
@@ -36,17 +36,17 @@ const userSchema = new Schema({
     },
     address: {
         type: String,
-        required: true
+        required: false
     },
     location: {
         type: {
             type: String,
             enum: ["POINT"],
-            required: true
+            required: false
         },
         coordinates: {
             type : [Number],
-            required: true
+            required: false
         }
     },
     is_active : {
@@ -68,7 +68,7 @@ const userSchema = new Schema({
     }
 
 
-}, {timestamp: true});
+}, {timestamp: false});
 module.exports = mongose.model('User', userSchema);
 //0 admin, 1 doctor, 2 patient
 

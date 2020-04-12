@@ -49,6 +49,10 @@ const patientSchema = new Schema({
     unseen_notification_count: {
         type: Number,
         default: 0
+    },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 }, {timestamp: true});
 module.exports =mongoose.model("Patient", patientSchema);
