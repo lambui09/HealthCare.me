@@ -1,0 +1,11 @@
+{
+  "name": "healthcare_backend",
+  "private": true,
+  "scripts": {
+    "install": "lerna bootstrap",
+    "dev": "lerna run dev"
+  },
+  "devDependencies": {
+    "lerna": "^3.20.2"
+  }
+}
