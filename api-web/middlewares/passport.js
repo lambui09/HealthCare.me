@@ -17,7 +17,7 @@ passport.use('jwt', new JwtStrategy(opts, async (jwt_payload, done) => {
             throw new Error('User not found!');
         }
     } catch (error) {
-        return done(err, false);
+        return done(error, false);
     }
 
     const Model = user.role === 'DOCTOR' ? Doctor : Patient;
@@ -26,8 +26,11 @@ passport.use('jwt', new JwtStrategy(opts, async (jwt_payload, done) => {
         const userRole = await Model.findOne({
             user_id: user._id
         });
-        return done(err, userRole);
+        if (!userRole) {
+            throw new Error('User not found!');
+        }
+        return done(error, userRole);
     } catch (error) {
-        return done(err, false);
+        return done(error, false);
     }
 }));

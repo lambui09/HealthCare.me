@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const {Schema} = mongoose;
+const {
+    Schema
+} = mongoose;
 const workingScheduleSchema = new Schema({
     from_date: {
         type: Date,
@@ -21,14 +23,20 @@ const workingScheduleSchema = new Schema({
         type: [String],
         default: [],
     },
-    duration_default_appointment:{
+    duration_default_appointment: {
         type: String,
-        default : "30"
+        default: "30"
     },
     is_active: {
         type: Boolean,
         default: false
+    },
+    doctor_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Doctor'
     }
-}, {timestamp: true});
+}, {
+    timestamp: true
+});
 module.exports = mongoose.model('WorkingSchedule', workingScheduleSchema);
 //luu thong tin gio lam cac ngay trong tuan bac si.
