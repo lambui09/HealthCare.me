@@ -67,7 +67,7 @@ const doctorSchema = new Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
 }, {
     timestamp: true
 });
