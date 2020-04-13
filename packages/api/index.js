@@ -8,6 +8,7 @@ require('./middlewares/passport');
 const AuthRouter = require('./routes/auth');
 const AppointmentRouter = require('./routes/appointment');
 const WorkingScheduleRouter = require('./routes/working_schedule');
+const DoctorRouter = require('./routes/doctor');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.get('/api/v1', (req, res) => {
 app.use('/api/v1/auth', AuthRouter);
 app.use('/api/v1/appointments', AppointmentRouter);
 app.use('/api/v1/working-schedule', WorkingScheduleRouter);
+app.use('/api/v1/doctors', DoctorRouter);
 app.listen(3000, (err) => {
     if (err) throw err;
     console.log('Server is running...')

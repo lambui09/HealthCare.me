@@ -28,10 +28,10 @@ const patientSchema = new Schema({
     location: {
         type: {
             type: String,
-            enum: ["POINT"],
+            enum: ["Point"],
         },
         coordinates: {
-            type: [Number],
+            type: [Number, Number],
         }
     },
     is_active: {
@@ -55,5 +55,10 @@ const patientSchema = new Schema({
         ref: 'User'
     }
 }, {timestamp: true});
+
+patientSchema.index({
+    location: "2dsphere"
+});
+
 module.exports =mongoose.model("Patient", patientSchema);
 

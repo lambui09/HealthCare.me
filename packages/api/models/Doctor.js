@@ -13,6 +13,9 @@ const doctorSchema = new Schema({
     last_name: {
         type: String,
     },
+    full_name: {
+        type: String,
+    },
     birth_day: {
         type: Number,
     },
@@ -30,10 +33,10 @@ const doctorSchema = new Schema({
     location: {
         type: {
             type: String,
-            enum: ["POINT"],
+            enum: ["Point"],
         },
         coordinates: {
-            type: [Number],
+            type: [Number, Number],
         }
     },
     is_active: {
@@ -71,4 +74,9 @@ const doctorSchema = new Schema({
 }, {
     timestamp: true
 });
+
+doctorSchema.index({
+    location: "2dsphere"
+});
+
 module.exports = mongoose.model("Doctor", doctorSchema);
