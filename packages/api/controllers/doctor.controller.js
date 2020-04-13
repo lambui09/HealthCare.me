@@ -1,67 +1,23 @@
 const Doctor = require('../models/Doctor');
 
-const createDoctor = async (req, res) => {
+const updateDoctor = async (req, res) => {
+    const { doctor_id } = req.params;
+    const { body: data } = req;
 
-};
-
-const getAllDoctor = async (req, res) => {
-    const page = +req.query.page || 1;
-    const page_size = 12;
-    const skip = page_size * (page - 1);
-    const limit = page_size;
-    let doctors = [];
     try {
-        doctors = await Doctor.find().skip(skip).limit(limit)
+        const doctorUpdated = await Doctor.findByIdAndUpdate(doctor_id, data);
+        return res.json({
+            success: true,
+            data: doctorUpdated,
+            statusCode: 200,
+        });
     } catch (error) {
-        console.log(error);
-        doctors = []
-    }
-    let total_users = [];
-    try {
-        total_users = await Doctor.countDocuments()
-    } catch (error) {
-        console.log(error);
-        total_users = []
-    }
-    const total_page = Math.ceil(total_users / page_size);
-    return res.status(200).json({
-        success: true,
-        data: {
-            doctors,
-        },
-        meta: {
-            page,
-            page_size: doctors.length,
-            total_page,
-            total_size: total_users,
-        }
-    })
-};
-const getDetailDoctor = async (req, res) => {
-    const errors = {};
-    const {
-        doctorId
-    } = req.params;
-    let doctor = null;
-    try {
-        doctor = await Doctor.findById(doctorId);
-    } catch (error) {
-        console.log(error);
-        doctor = null;
-    }
-    if (!doctor) {
-        errors.error = 'Can\'t get detail doctor, Please try again later';
-        return res.status(404).json({
+        return res.json({
             success: false,
-            errors,
-        }, );
+            errorMessage: 'Server error',
+            statusCode: 500,
+        });
     }
-    return res.status(200).json({
-        success: true,
-        data: {
-            doctor,
-        },
-    });
 };
 
 const searchDoctor = async (req, res) => {
@@ -99,7 +55,6 @@ const searchDoctor = async (req, res) => {
 }
 
 module.exports = {
-    getAllDoctor,
-    getDetailDoctor,
+    updateDoctor,
     searchDoctor,
 };
