@@ -1,6 +1,5 @@
 const Favorite = require('../models/Favorite');
-const getAllFavorites = async(req, res) =
->
+const getAllFavorites = async(req, res) =>
 {
     const page = +req.query.page || 1;
     const page_size = 10;
@@ -36,8 +35,7 @@ const getAllFavorites = async(req, res) =
             total_size: total_favorites,
         },
     });
-}
-;
+};
 module.exports = {
     getAllFavorites,
 };
