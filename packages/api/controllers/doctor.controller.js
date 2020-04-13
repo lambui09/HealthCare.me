@@ -54,7 +54,30 @@ const searchDoctor = async (req, res) => {
     }
 }
 
+const getDoctor = async (req, res) => {
+    const { doctor_id } = req.query;
+    const filter = {};
+    if (doctor_id) {
+        filter._id = doctor_id;
+    }
+    try {
+        const list_doctor = await Doctor.find(filter);
+        return res.json({
+            success: true,
+            data: list_doctor,
+            statusCode: 200
+        });
+    } catch (error) {
+        return res.json({
+            success: true,
+            data: [],
+            statusCode: 200
+        });
+    }
+}
+
 module.exports = {
     updateDoctor,
     searchDoctor,
+    getDoctor,
 };
