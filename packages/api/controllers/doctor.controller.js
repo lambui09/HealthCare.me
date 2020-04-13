@@ -231,7 +231,6 @@ const getDetailDoctor = async (req, res) => {
     });
 };
 
-
 module.exports = {
     updateDoctor,
     searchDoctor,
