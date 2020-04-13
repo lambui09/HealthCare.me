@@ -9,6 +9,7 @@ const AuthRouter = require('./routes/auth');
 const AppointmentRouter = require('./routes/appointment');
 const WorkingScheduleRouter = require('./routes/working_schedule');
 const DoctorRouter = require('./routes/doctor');
+const FavoriteRouter = require('./routes/favorite');
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/api/v1/auth', AuthRouter);
 app.use('/api/v1/appointments', AppointmentRouter);
 app.use('/api/v1/working-schedule', WorkingScheduleRouter);
 app.use('/api/v1/doctors', DoctorRouter);
+app.use('/api/v1/favorites', FavoriteRouter);
 app.listen(3000, (err) => {
     if (err) throw err;
     console.log('Server is running...')

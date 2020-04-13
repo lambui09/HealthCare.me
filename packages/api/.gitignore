@@ -110,5 +110,9 @@ temp/
 
 # custom
 .idea
+.idea/
+.DS_Store
+packages/.DS_Store
+packages/.idea/
 
 # End of https://www.gitignore.io/api/node
