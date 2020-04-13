@@ -231,6 +231,92 @@ const getDetailDoctor = async (req, res) => {
     });
 };
 
+const addFavorite = async (req, res) => {
+    const {
+        user
+    } = req;
+    console.log(user);
+    const errors = {};
+    const {doctorId} = req.params;
+    console.log(doctorId)
+    let doctor = null;
+    try {
+        doctor = await Doctor.findById(doctorId);
+    } catch (error) {
+        console.log(error);
+        doctor = null;
+    }
+    if (!doctor) {
+        errors.error = 'Doctor not found!';
+        return res.status(500).json({
+            success: false,
+            errors,
+        });
+    }
+
+    let favorite = null;
+    try {
+        favorite = await Favorite.findOne({
+            doctor: doctorId,
+        })
+    } catch (error) {
+        console.log(error);
+        favorite = null;
+    }
+
+    if (!favorite) {
+        const data = {
+            favorite_person: user.id,
+            doctor: doctorId,
+        };
+        const newDoctorFavorite = new Favorite(data);
+        let doctorFavoriteCreated = null;
+        try {
+            doctorFavoriteCreated = await newDoctorFavorite.save(data)
+        } catch (error) {
+            console.log(error);
+            doctorFavoriteCreated = null;
+        }
+        if (!doctorFavoriteCreated) {
+            errors.error = 'Can\'t not create favorite for doctor!';
+            return res.status(400).json({
+                success: false,
+                errors,
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            data: {
+                doctorFavoriteCreated,
+            },
+        });
+    }
+
+    //clear add to favorite
+    let doctorFavoriteDeleted = null;
+    try {
+        doctorFavoriteDeleted = await Favorite.findOneAndDelete({
+            doctor: doctorId,
+        })
+    } catch (error) {
+        console.log(error);
+        doctorFavoriteDeleted = null;
+    }
+
+    if (!doctorFavoriteDeleted) {
+        errors.error = 'Can\'t not remove favorite for doctor!';
+        return res.status(400).json({
+            success: false,
+            errors,
+        });
+    }
+    return res.status(200).json({
+        success: true,
+        data: {
+            doctorFavoriteDeleted,
+        },
+    });
+}
 module.exports = {
     updateDoctor,
     searchDoctor,
