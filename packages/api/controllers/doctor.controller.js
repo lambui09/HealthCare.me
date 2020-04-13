@@ -1,10 +1,6 @@
 const Doctor = require('../models/Doctor');
 const Favorite = require('../models/Favorite');
 
-const createDoctor = async (req, res) => {
-
-};
-
 const getAllDoctor = async (req, res) => {
     const page = +req.query.page || 1;
     const page_size = 12;
@@ -69,6 +65,7 @@ const addFavorite = async (req, res) => {
     const {
         user
     } = req;
+    console.log(user);
     const errors = {};
     const {doctorId} = req.params;
     console.log(doctorId)
@@ -99,33 +96,32 @@ const addFavorite = async (req, res) => {
 
     if (!favorite) {
         const data = {
-            favorite_person: user,
+            favorite_person: user.id,
             doctor: doctorId,
         };
-    }
-
-    console.log(data)
-    const newDoctorFavorite = new Favorite(data);
-    let doctorFavoriteCreated = null;
-    try {
-        doctorFavoriteCreated = await newDoctorFavorite.save(data)
-    } catch (error) {
-        console.log(error);
-        doctorFavoriteCreated = null;
-    }
-    if (!doctorFavoriteCreated) {
-        errors.error = 'Can\'t not create favorite for doctor!';
-        return res.status(400).json({
-            success: false,
-            errors,
+        const newDoctorFavorite = new Favorite(data);
+        let doctorFavoriteCreated = null;
+        try {
+            doctorFavoriteCreated = await newDoctorFavorite.save(data)
+        } catch (error) {
+            console.log(error);
+            doctorFavoriteCreated = null;
+        }
+        if (!doctorFavoriteCreated) {
+            errors.error = 'Can\'t not create favorite for doctor!';
+            return res.status(400).json({
+                success: false,
+                errors,
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            data: {
+                doctorFavoriteCreated,
+            },
         });
     }
-    return res.status(200).json({
-        success: true,
-        data: {
-            doctorFavoriteCreated,
-        },
-    });
+
     //clear add to favorite
     let doctorFavoriteDeleted = null;
     try {
