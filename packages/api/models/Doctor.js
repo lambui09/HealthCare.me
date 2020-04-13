@@ -13,6 +13,9 @@ const doctorSchema = new Schema({
     last_name: {
         type: String,
     },
+    full_name: {
+        type: String,
+    },
     birth_day: {
         type: Number,
     },

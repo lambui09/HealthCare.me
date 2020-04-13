@@ -7,23 +7,23 @@ const createDoctor = async (req, res) => {
 const getAllDoctor = async (req, res) => {
     const page = +req.query.page || 1;
     const page_size = 12;
-    const skip = page_size * (page -1);
+    const skip = page_size * (page - 1);
     const limit = page_size;
     let doctors = [];
-    try{
+    try {
         doctors = await Doctor.find().skip(skip).limit(limit)
-    }catch (error) {
+    } catch (error) {
         console.log(error);
         doctors = []
     }
     let total_users = [];
     try {
         total_users = await Doctor.countDocuments()
-    }catch (error) {
+    } catch (error) {
         console.log(error);
         total_users = []
     }
-    const total_page = Math.ceil(total_users /page_size);
+    const total_page = Math.ceil(total_users / page_size);
     return res.status(200).json({
         success: true,
         data: {
@@ -39,31 +39,67 @@ const getAllDoctor = async (req, res) => {
 };
 const getDetailDoctor = async (req, res) => {
     const errors = {};
-    const {doctorId} = req.params;
+    const {
+        doctorId
+    } = req.params;
     let doctor = null;
-    try{
+    try {
         doctor = await Doctor.findById(doctorId);
-    }catch (error) {
+    } catch (error) {
         console.log(error);
         doctor = null;
     }
-    if (!doctor){
+    if (!doctor) {
         errors.error = 'Can\'t get detail doctor, Please try again later';
-        return res.status(404).json(
-            {
-                success: false,
-                errors,
-            },
-        );
+        return res.status(404).json({
+            success: false,
+            errors,
+        }, );
     }
     return res.status(200).json({
         success: true,
-        data:{
+        data: {
             doctor,
         },
     });
 };
+
+const searchDoctor = async (req, res) => {
+    const {
+        keyword,
+        latitude,
+        longitude
+    } = req.query;
+
+    try {
+        const list_doctor = await Doctor.find({
+            full_name: new RegExp(keyword),
+            location: {
+                "$near": {
+                    "$maxDistance": 10000,
+                    "$geometry": {
+                        type: "Point",
+                        coordinates: [longitude, latitude]
+                    }
+                }
+            }
+        });
+        return res.json({
+            success: true,
+            data: list_doctor,
+            statusCode: 200
+        });
+    } catch (error) {
+        return res.json({
+            success: true,
+            data: [],
+            statusCode: 200
+        });
+    }
+}
+
 module.exports = {
-  getAllDoctor,
-  getDetailDoctor,
+    getAllDoctor,
+    getDetailDoctor,
+    searchDoctor,
 };
