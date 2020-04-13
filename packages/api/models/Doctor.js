@@ -33,10 +33,10 @@ const doctorSchema = new Schema({
     location: {
         type: {
             type: String,
-            enum: ["POINT"],
+            enum: ["Point"],
         },
         coordinates: {
-            type: [Number],
+            type: [Number, Number],
         }
     },
     is_active: {
@@ -74,4 +74,9 @@ const doctorSchema = new Schema({
 }, {
     timestamp: true
 });
+
+doctorSchema.index({
+    location: "2dsphere"
+});
+
 module.exports = mongoose.model("Doctor", doctorSchema);

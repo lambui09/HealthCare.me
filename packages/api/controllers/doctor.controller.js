@@ -2,7 +2,12 @@ const Doctor = require('../models/Doctor');
 
 const updateDoctor = async (req, res) => {
     const { doctor_id } = req.params;
-    const { body: data } = req;
+    let { body: data } = req;
+
+    if (data.first_name || data.last_name) {
+        const full_name = `${data.first_name} ${data.last_name}`;
+        data.full_name = full_name;
+    }
 
     try {
         const doctorUpdated = await Doctor.findByIdAndUpdate(doctor_id, data);
@@ -29,13 +34,13 @@ const searchDoctor = async (req, res) => {
 
     try {
         const list_doctor = await Doctor.find({
-            full_name: new RegExp(keyword),
+            full_name: new RegExp(keyword, 'i'),
             location: {
-                "$near": {
+                "$geoNear": {
                     "$maxDistance": 10000,
                     "$geometry": {
                         type: "Point",
-                        coordinates: [longitude, latitude]
+                        coordinates: [+longitude, +latitude]
                     }
                 }
             }
@@ -46,6 +51,7 @@ const searchDoctor = async (req, res) => {
             statusCode: 200
         });
     } catch (error) {
+        console.log(error);
         return res.json({
             success: true,
             data: [],
