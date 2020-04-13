@@ -117,7 +117,8 @@ const addFavorite = async (req, res) => {
 
     if (!favorite) {
         const data = {
-            favorite_person: user.id,
+            is_favorite: true,
+            favorite_personal: user.id,
             doctor: doctorId,
         };
         const newDoctorFavorite = new Favorite(data);

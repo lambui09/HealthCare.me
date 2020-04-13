@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const {Schema} = mongoose;
 const favoriteSchema = new Schema({
-    is_active : {
+    is_favorite : {
         type: Boolean,
         default: false
     },
