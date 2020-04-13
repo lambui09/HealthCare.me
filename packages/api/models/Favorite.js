@@ -9,7 +9,11 @@ const favoriteSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Patient',
         required: true,
-    }
+    },
+    doctor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Doctor',
+    },
 }, {timestamp : true});
 module.exports = mongoose.model('Favorite', favoriteSchema);
 
