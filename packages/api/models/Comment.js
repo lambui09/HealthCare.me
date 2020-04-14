@@ -10,7 +10,7 @@ const commentSchema = new Schema({
         type: Number,
         required: true,
     },
-    reviewer: {
+    commenter: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Patient',
         required: true,

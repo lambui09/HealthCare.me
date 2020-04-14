@@ -59,7 +59,7 @@ const searchDoctor = async (req, res) => {
             statusCode: 200
         });
     }
-}
+};
 
 const getDoctor = async (req, res) => {
     const { doctor_id } = req.query;
@@ -81,7 +81,7 @@ const getDoctor = async (req, res) => {
             statusCode: 200
         });
     }
-}
+};
 
 const addFavorite = async (req, res) => {
     const {
@@ -89,7 +89,7 @@ const addFavorite = async (req, res) => {
     } = req;
     const errors = {};
     const {doctorId} = req.params;
-    console.log(doctorId)
+    console.log(doctorId);
     let doctor = null;
     try {
         doctor = await Doctor.findById(doctorId);
