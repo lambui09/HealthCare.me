@@ -5,7 +5,6 @@ const Comment = require('../models/Comment');
 
 /**
  * get all comments
- *
  * */
 const getAllComments = async (req, res) => {
     const page = +req.query.page || 1;
@@ -54,14 +53,14 @@ const getAllCommentsOwnDoctor = async (req, res) => {
     const {doctorId} = req.params;
     let comments = [];
     try {
-        comments = await Comment.find({tour: mongoose.mongo.ObjectId(doctorId)}).populate('' +
-            'commenter')
+        comments = await Comment.find({doctor: mongoose.mongo.ObjectId(doctorId)}).populate('commenter')
             .sort({createdAt: -1}).skip(skip)
             .limit(limit);
     } catch (error) {
         console.log(error);
         comments = []
     }
+    console.log(comments);
     let total_comments = [];
     try {
         total_comments = await Comment.findById(doctorId);
@@ -69,6 +68,7 @@ const getAllCommentsOwnDoctor = async (req, res) => {
         console.log(error);
         total_comments = [];
     }
+    console.log(total_comments);
     const total_page = Math.ceil(total_comments.length / page_size);
     return res.status(200).json({
         success: true,
@@ -79,7 +79,7 @@ const getAllCommentsOwnDoctor = async (req, res) => {
             page,
             page_size: comments.length,
             total_page,
-            total_size: total_comments.length,
+            total_size: total_comments,
         },
     });
 };
@@ -166,6 +166,6 @@ const createCommentToDoctor = async (req, res) => {
 module.exports = {
     getAllComments,
     getAllCommentsOwnDoctor,
-    createCommentToDoctor
+    createCommentToDoctor,
 };
 
