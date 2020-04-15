@@ -6,87 +6,36 @@ const Comment = require('../models/Comment');
 /**
  * get all comments
  * */
-const getAllComments = async (req, res) => {
-    const page = +req.query.page || 1;
-    const page_size = 10;
-    const skip = page_size * (page - 1);
-    const limit = page_size;
-    let comments = [];
+const getComments = async (req, res) => {
+    const { doctor_id } = req.query;
+    const filter = {};
+    if (doctor_id) {
+        filter.doctor = doctor_id;
+    }
     try {
-        comments = await Comment.find()
+        const comments = await Comment.find(filter)
             .populate('commenter')
             .populate('doctor')
-            .skip(skip)
-            .limit(limit)
-    } catch (error) {
-        console.log(error);
-        comments = [];
-    }
-    let total_comments = [];
-    try {
-        total_comments = Comment.countDocuments();
-    } catch (error) {
-        console.log(error);
-        total_comments = [];
-    }
-    const total_page = Math.ceil(total_comments / page_size);
-    return res.status(200).json({
-        success: true,
-        data: {
-            comments,
-        },
-        meta: {
-            page,
-            page_size: comments.length,
-            total_page,
-            total_size: total_comments,
-        }
-    })
-};
 
-const getAllCommentsOwnDoctor = async (req, res) => {
-    const page = +req.query.page || 1;
-    const page_size = 6;
-    const skip = page_size * (page - 1);
-    const limit = page_size;
-    const errors = {};
-    const {doctorId} = req.params;
-    let comments = [];
-    try {
-        comments = await Comment.find({doctor: mongoose.mongo.ObjectId(doctorId)}).populate('commenter')
-            .sort({createdAt: -1}).skip(skip)
-            .limit(limit);
+        return res.json({
+            success: true,
+            data: comments,
+            statusCode: 200,
+        });
     } catch (error) {
-        console.log(error);
-        comments = []
+        return res.json({
+            success: true,
+            data: [],
+            statusCode: 200,
+        });
     }
-    console.log(comments);
-    let total_comments = [];
-    try {
-        total_comments = await Comment.findById(doctorId);
-    } catch (error) {
-        console.log(error);
-        total_comments = [];
-    }
-    console.log(total_comments);
-    const total_page = Math.ceil(total_comments.length / page_size);
-    return res.status(200).json({
-        success: true,
-        data: {
-            comments,
-        },
-        meta: {
-            page,
-            page_size: comments.length,
-            total_page,
-            total_size: total_comments,
-        },
-    });
 };
 
 const createCommentToDoctor = async (req, res) => {
     const errors = {};
-    const {doctorId} = req.params;
+    const {
+        doctor_id
+    } = req.params;
     let doctor = null;
     try {
         doctor = await Doctor.findById(doctorId);
@@ -104,7 +53,7 @@ const createCommentToDoctor = async (req, res) => {
     const commenter = req.user.id;
     const data = {
         ...req.body,
-        doctor: doctorId,
+        doctor: doctor_id,
         commenter,
     };
     const newComment = new Comment(data);
@@ -116,23 +65,29 @@ const createCommentToDoctor = async (req, res) => {
         commentCreated = null;
     }
 
-    if (!newComment){
+    if (!newComment) {
         errors.error = 'Can\'t create comment. Please try again later!';
         return res.status(400).json({
             success: false,
             errors,
         });
     }
-    let {rate, num_comment} = doctor;
+    let {
+        rate,
+        num_comment
+    } = doctor;
     rate = ((rate * num_comment) + commentCreated.rate_star) / (num_comment + 1);
     num_comment += 1;
-    try{
-        await Doctor.findByIdAndUpdate(doctorId, {rate, num_comment});
-    }catch (error) {
+    try {
+        await Doctor.findByIdAndUpdate(doctorId, {
+            rate,
+            num_comment
+        });
+    } catch (error) {
         console.log(error);
         try {
             await Doctor.findByIdAndUpdate(commentCreated._id);
-        }catch (error1) {
+        } catch (error1) {
             console.log(error1);
         }
         errors.error = 'Can\'t create comment. Please try again later!';
@@ -142,14 +97,14 @@ const createCommentToDoctor = async (req, res) => {
         });
     }
     let comment = null;
-    try{
+    try {
         comment = await Comment.findById(commentCreated._id).populate('commenter');
-    }catch (error) {
+    } catch (error) {
         console.log(error);
         comment = null;
     }
 
-    if (!comment){
+    if (!comment) {
         errors.error = 'Can\'t create comment. Please try again later!';
         return res.status(400).json({
             success: false,
@@ -164,8 +119,6 @@ const createCommentToDoctor = async (req, res) => {
     });
 };
 module.exports = {
-    getAllComments,
-    getAllCommentsOwnDoctor,
+    getComments,
     createCommentToDoctor,
 };
-
