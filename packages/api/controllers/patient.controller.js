@@ -22,11 +22,6 @@ const updatePatient = async (req, res) =>{
     }
 };
 
-const updateSurvey = async (req, res) =>{
-    const errors = {};
-    const {patient_id} = req.params;
-
-};
 module.exports = {
     updatePatient
 };

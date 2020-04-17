@@ -15,7 +15,7 @@ const getComments = async (req, res) => {
     try {
         const comments = await Comment.find(filter)
             .populate('commenter')
-            .populate('doctor')
+            .populate('doctor');
 
         return res.json({
             success: true,
