@@ -11,6 +11,8 @@ const WorkingScheduleRouter = require('./routes/working_schedule');
 const DoctorRouter = require('./routes/doctor');
 const FavoriteRouter = require('./routes/favorite');
 const CommentRouter = require('./routes/comment');
+const PatientRouter = require('./routes/patient');
+const SurveySymptomRouter = require('./routes/surveySymptom');
 
 const app = express();
 
@@ -30,6 +32,9 @@ app.use('/api/v1/working-schedule', WorkingScheduleRouter);
 app.use('/api/v1/doctors', DoctorRouter);
 app.use('/api/v1/favorites', FavoriteRouter);
 app.use('/api/v1/comments', CommentRouter);
+app.use('/api/v1/patients', PatientRouter);
+app.use('/api/v1/survey-symptoms', SurveySymptomRouter);
+
 app.listen(3000, (err) => {
     if (err) throw err;
     console.log('Server is running...')
