@@ -1,4 +1,6 @@
-const admin = require('../server.js');
+const {
+    admin
+} = require('../server.js');
 const Notification = require('../models/Notification');
 const notification_options = {
     priority: "high",
