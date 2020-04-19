@@ -1,4 +1,4 @@
-const admin = require('./server');
+const admin = require('../server.js');
 const Notification = require('../models/Notification');
 const notification_options = {
     priority: "high",
@@ -11,21 +11,21 @@ const sendNotification = async (req, res) => {
         title,
         content,
     } = req.body;
-    try{
+    try {
         const newNotification = new Notification();
         newNotification.title = title;
         newNotification.content = content;
 
-    }catch (error) {
+    } catch (error) {
         console.log(error);
     }
     const registrationToken = device_token;
     const options = notification_options;
     admin.messaging().sendToDevice(registrationToken, newNotification, options)
-        .then(response =>{
-            res.status(200).send('Notification sent successfully'+response);
-        }).catch( error =>{
-            console.log('errorroror' + error)
+        .then(response => {
+            res.status(200).send('Notification sent successfully' + response);
+        }).catch(error => {
+        console.log('errorroror' + error)
     })
 };
 module.exports = {
