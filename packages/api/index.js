@@ -5,6 +5,7 @@ const passport = require('passport');
 require('./config/database');
 require('./middlewares/passport');
 
+
 const AuthRouter = require('./routes/auth');
 const AppointmentRouter = require('./routes/appointment');
 const WorkingScheduleRouter = require('./routes/working_schedule');
@@ -13,6 +14,7 @@ const FavoriteRouter = require('./routes/favorite');
 const CommentRouter = require('./routes/comment');
 const PatientRouter = require('./routes/patient');
 const SurveySymptomRouter = require('./routes/surveySymptom');
+const NotificationRouter = require('./routes/notification');
 
 const app = express();
 
@@ -34,6 +36,7 @@ app.use('/api/v1/favorites', FavoriteRouter);
 app.use('/api/v1/comments', CommentRouter);
 app.use('/api/v1/patients', PatientRouter);
 app.use('/api/v1/survey-symptoms', SurveySymptomRouter);
+app.use('/api/v1/notifications',NotificationRouter);
 
 app.listen(3000, (err) => {
     if (err) throw err;
