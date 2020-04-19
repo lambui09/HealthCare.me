@@ -71,6 +71,10 @@ const doctorSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
+    device_token: {
+        type: String,
+        default: ""
+    },
 }, {
     timestamp: true
 });

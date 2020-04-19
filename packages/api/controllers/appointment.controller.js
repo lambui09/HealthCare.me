@@ -1,5 +1,7 @@
 const moment = require('moment');
 const Appointment = require('../models/Appointment');
+const sendNotification = require('../helpers/sendNotification');
+const Doctor = require('../models/Doctor');
 
 const createAppointment = async (req, res) => {
     const {
@@ -29,6 +31,23 @@ const createAppointment = async (req, res) => {
         newAppointment.doctor_id = doctor_id;
         newAppointment.patient_id = user._id;
         const appointmentCreated = await newAppointment.save();
+        try{
+            doctor = Doctor.findById(doctor_id).populate('patient_id');
+            const message_notification = {
+                notification: {
+                    title: `Bạn có lịch hẹn mới với bác sĩ ${doctor.full_name}`,
+                    body: `Vào lúc ${newAppointment.time} ngày ${newAppointment.date}`
+                }
+            };
+            let device_token = doctor.device_token;
+            if (device_token != null){
+                sendNotification(device_token, message_notification)
+            }
+        }catch (error) {
+            console.log(error)
+        }
+        //add send notification:
+
         return res.json({
             success: true,
             data: appointmentCreated,
@@ -52,9 +71,25 @@ const updateAppointment = async (req, res) => {
     if (data.date) {
         data.date = moment(data.date)
     }
+    const {
+        user
+    } = req;
 
     try {
-        const appointmentUpdated = await Appointment.findByIdAndUpdate(appointment_id, data);
+        const appointmentUpdated = await Appointment.findByIdAndUpdate(appointment_id, data).populate('doctor')
+            .populate('patient');
+        //add send notification
+        const message_notification = {
+            notification: {
+                title: `Bác sĩ ${doctor.full_name} đã xác nhận lịch hẹn`,
+                body: `Vào lúc ${appointmentUpdated.time} ngày ${appointmentUpdated.date}`
+            }
+        };
+        let device_token = doctor.device_token;
+        if (device_token != null){
+            sendNotification(device_token, message_notification)
+        }
+
         return res.json({
             success: true,
             data: appointmentUpdated,

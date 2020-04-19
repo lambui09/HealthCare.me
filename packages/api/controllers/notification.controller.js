@@ -11,24 +11,32 @@ const sendNotification = async (req, res) => {
     const {
         device_token,
         title,
-        content,
+        body,
     } = req.body;
     try {
+
         const newNotification = new Notification();
         newNotification.title = title;
-        newNotification.content = content;
-
+        newNotification.body = body;
+        console.log(newNotification);
+        const registrationToken = device_token;
+        const options = notification_options;
+        const message_notification = {
+            notification: {
+                title: newNotification.title,
+                body: newNotification.body
+            }
+        };
+        admin.messaging().sendToDevice(registrationToken, message_notification, options)
+            .then(response => {
+                res.status(200).send('Notification sent successfully' + response);
+            }).catch(error => {
+            console.log('error' + error)
+        })
     } catch (error) {
         console.log(error);
     }
-    const registrationToken = device_token;
-    const options = notification_options;
-    admin.messaging().sendToDevice(registrationToken, newNotification, options)
-        .then(response => {
-            res.status(200).send('Notification sent successfully' + response);
-        }).catch(error => {
-        console.log('errorroror' + error)
-    })
+
 };
 module.exports = {
     sendNotification,

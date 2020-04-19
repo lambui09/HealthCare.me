@@ -5,7 +5,7 @@ const notificationSchema = new Schema({
         type: String,
         default: ""
     },
-    content: {
+    body: {
         type: String,
         default: "",
     },
