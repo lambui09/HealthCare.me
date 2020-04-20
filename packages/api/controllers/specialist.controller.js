@@ -35,6 +35,7 @@ const updateSpecialist = async (req, res) => {
     try {
         const specialistUpdated = await Specialist.findByIdAndUpdate(specialist_id, data)
             .populate('doctor');
+        console.log(specialistUpdated);
         return res.status(200).json({
             success: true,
             data: specialistUpdated
