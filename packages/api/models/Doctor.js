@@ -75,10 +75,10 @@ const doctorSchema = new Schema({
         type: String,
         default: ""
     },
-    specialist:{
+    specialist:[{
         type:mongoose.Schema.Types.ObjectId,
         ref: 'Specialist'
-    }
+    }],
 }, {
     timestamp: true
 });

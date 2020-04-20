@@ -37,7 +37,7 @@ app.use('/api/v1/favorites', FavoriteRouter);
 app.use('/api/v1/comments', CommentRouter);
 app.use('/api/v1/patients', PatientRouter);
 app.use('/api/v1/survey-symptoms', SurveySymptomRouter);
-app.use('/api/v1/notifications',NotificationRouter);
+app.use('/api/v1/notifications', NotificationRouter);
 app.use('/api/v1/specialists', SpecialistRouter);
 
 app.listen(3000, (err) => {
