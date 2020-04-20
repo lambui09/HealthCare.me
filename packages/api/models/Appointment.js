@@ -29,6 +29,11 @@ const appointmentSchema = new Schema({
         type: Number,
         default: 30
     },
+    symptom_list: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Symptom',
+        required: true,
+    }],
     doctor_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Doctor',
@@ -42,4 +47,5 @@ const appointmentSchema = new Schema({
 }, {
     timestamp: true
 });
+
 module.exports = mongoose.model('Appointment', appointmentSchema);
