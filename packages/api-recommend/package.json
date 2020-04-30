@@ -1,11 +1,11 @@
 {
-  "name": "api-recommend",
-  "version": "1.0.0",
-  "main": "index_recommend.js",
+  "name": "@healthcare/api-recommend",
+  "version": "0.0.1",
+  "main": "index.js",
   "license": "MIT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index_recommend.js"
+    "dev": "nodemon index.js"
   },
   "devDependencies": {
     "nodemon": "^2.0.3"
