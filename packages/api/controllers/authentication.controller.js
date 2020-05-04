@@ -21,10 +21,23 @@ const signup = async (req, res) => {
         const newModel = new Model();
         newModel.phone_number = phone_number;
         newModel.user_id = newUser._id;
+        const token = jwt.sign({
+                _id: newUser._id,
+            },
+            process.env.JWT_SECRET_KEY, {
+                expiresIn: process.env.TIME_EXPIRE_TOKEN,
+            }
+        );
+        await User.findByIdAndUpdate(newUser._id, {
+            is_exp: false,
+        });
         await newModel.save();
         return res.json({
             success: true,
-            data: newModel,
+            data: {
+                token: token,
+                user: newModel,
+            },
             statusCode: 200
         })
     } catch (error) {
