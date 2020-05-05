@@ -9,9 +9,8 @@ const updateDoctor = async (req, res) => {
         const full_name = `${data.first_name} ${data.last_name}`;
         data.full_name = full_name;
     }
-
     try {
-        const doctorUpdated = await Doctor.findByIdAndUpdate(doctor_id, data);
+        const doctorUpdated = await Doctor.findByIdAndUpdate(doctor_id, data, {new: true});
         return res.json({
             success: true,
             data: doctorUpdated,
@@ -88,11 +87,11 @@ const addFavorite = async (req, res) => {
         user
     } = req;
     const errors = {};
-    const {doctorId} = req.params;
-    console.log(doctorId);
+    const {doctor_id} = req.params;
+    console.log(doctor_id);
     let doctor = null;
     try {
-        doctor = await Doctor.findById(doctorId);
+        doctor = await Doctor.findById(doctor_id);
     } catch (error) {
         console.log(error);
         doctor = null;
@@ -108,7 +107,7 @@ const addFavorite = async (req, res) => {
     let favorite = null;
     try {
         favorite = await Favorite.findOne({
-            doctor: doctorId,
+            doctor: doctor_id,
         })
     } catch (error) {
         console.log(error);
@@ -119,7 +118,7 @@ const addFavorite = async (req, res) => {
         const data = {
             is_favorite: true,
             favorite_personal: user.id,
-            doctor: doctorId,
+            doctor: doctor_id,
         };
         const newDoctorFavorite = new Favorite(data);
         let doctorFavoriteCreated = null;
@@ -148,7 +147,7 @@ const addFavorite = async (req, res) => {
     let doctorFavoriteDeleted = null;
     try {
         doctorFavoriteDeleted = await Favorite.findOneAndDelete({
-            doctor: doctorId,
+            doctor: doctor_id,
         })
     } catch (error) {
         console.log(error);
@@ -190,6 +189,8 @@ const getAllDoctor = async (req, res) => {
         total_users = []
     }
     const total_page = Math.ceil(total_users / page_size);
+    console.log(total_page);
+    console.log(doctors.length);
     return res.status(200).json({
         success: true,
         data: {
@@ -206,10 +207,10 @@ const getAllDoctor = async (req, res) => {
 
 const getDetailDoctor = async (req, res) => {
     const errors = {};
-    const {doctorId} = req.params;
+    const {doctor_id} = req.params;
     let doctor = null;
     try {
-        doctor = await Doctor.findById(doctorId);
+        doctor = await Doctor.findById(doctor_id);
     } catch (error) {
         console.log(error);
         doctor = null;

@@ -7,8 +7,13 @@ const updatePatient = async (req, res) =>{
         const full_name = `${data.first_name} ${data.last_name}`;
         data.full_name = full_name;
     }
+
+    console.log(data);
+    console.log({patient_id});
+    console.log(req.params);
     try{
-        const patientUpdated = await Patient.findByIdAndUpdate(patient_id, data);
+        const patientUpdated = await Patient.findByIdAndUpdate(patient_id, data, {new: true});
+        console.log(patientUpdated);
         return res.status(200).json({
             success: true,
             data: patientUpdated

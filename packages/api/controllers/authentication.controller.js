@@ -79,7 +79,9 @@ const login = async (req, res) => {
         });
         return res.json({
             success: true,
-            data: token,
+            data: {
+                token: token
+            },
             statusCode: 200
         });
     } catch (error) {

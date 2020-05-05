@@ -38,7 +38,7 @@ const createCommentToDoctor = async (req, res) => {
     } = req.params;
     let doctor = null;
     try {
-        doctor = await Doctor.findById(doctorId);
+        doctor = await Doctor.findById(doctor_id);
     } catch (error) {
         console.log(error);
         doctor = null;
@@ -79,7 +79,7 @@ const createCommentToDoctor = async (req, res) => {
     rate = ((rate * num_comment) + commentCreated.rate_star) / (num_comment + 1);
     num_comment += 1;
     try {
-        await Doctor.findByIdAndUpdate(doctorId, {
+        await Doctor.findByIdAndUpdate(doctor_id, {
             rate,
             num_comment
         });

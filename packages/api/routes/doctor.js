@@ -7,11 +7,11 @@ const passport = require('passport');
 router.patch('/:doctor_id', doctorController.updateDoctor);
 router.get('/search', doctorController.searchDoctor);
 router.get('/', doctorController.getDoctor);
-router.get('/:doctorId',doctorController.getDetailDoctor);
-router.get('/:doctorId/favorite',passport.authenticate('jwt', {
+router.get('/:doctor_id',doctorController.getDetailDoctor);
+router.get('/:doctor_id/favorite',passport.authenticate('jwt', {
     session: false
 }),doctorController.addFavorite);
-router.post('/:doctorId/comments',passport.authenticate('jwt', {
+router.post('/:doctor_id/comments',passport.authenticate('jwt', {
     session: false
 }), commentController.createCommentToDoctor);
 
