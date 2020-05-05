@@ -17,7 +17,7 @@ const doctorSchema = new Schema({
         type: String,
     },
     birth_day: {
-        type: Number,
+        type: String,
     },
     gender: {
         type: String,
@@ -75,10 +75,15 @@ const doctorSchema = new Schema({
         type: String,
         default: ""
     },
-    specialist:[{
+    examination:[{
         type:mongoose.Schema.Types.ObjectId,
-        ref: 'Specialist'
+        ref: 'Examination'
     }],
+    specialist:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Speci'
+    }
+
 }, {
     timestamp: true
 });
