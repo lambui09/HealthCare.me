@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: main-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: main
+  template:
+    metadata:
+      labels:
+        app: main
+    spec:
+      containers:
+        - name: main
+          image: ngquangan/healthcare-main
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: main-srv
+spec:
+  selector:
+    app: main
+  ports:
+    - name: main
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

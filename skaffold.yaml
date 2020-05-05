@@ -1,0 +1,16 @@
+apiVersion: skaffold/v2beta2
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - infra/k8s/*
+build:
+  artifacts:
+    - image: ngquangan/healthcare-main
+      context: packages/main
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.js'
+            dest: .
