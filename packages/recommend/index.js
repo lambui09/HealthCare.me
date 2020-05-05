@@ -4,6 +4,7 @@ require('./config/database/mongo');
 require('./config/database/neo4j');
 
 const app = express();
+
 app.get('/', (req, res) => res.status(200).json({
     message: 'It ok.'
 }));
