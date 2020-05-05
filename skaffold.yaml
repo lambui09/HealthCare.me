@@ -6,11 +6,11 @@ deploy:
       - infra/k8s/*
 build:
   artifacts:
-    - image: ngquangan/ticketing-auth
-      context: auth
+    - image: ngquangan/healthcare-main
+      context: packages/main
       docker:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: 'src/**/*.ts'
+          - src: 'src/**/*.js'
             dest: .

@@ -42,5 +42,6 @@ app.use('/api/v1/specialists', SpecialistRouter);
 
 app.listen(3000, (err) => {
     if (err) throw err;
+    console.log('API v0.0.1');
     console.log('Server is running...')
 });
