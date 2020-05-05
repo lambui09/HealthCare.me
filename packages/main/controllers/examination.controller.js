@@ -1,4 +1,5 @@
 const Examination = require('../models/Examination');
+const Doctor = require('../models/Doctor');
 const createExamination = async (req, res) => {
     const errors = {};
     const {
@@ -31,9 +32,8 @@ const updateExamination = async (req, res) => {
         examination_id
     } = req.params;
     const data = req.body;
-
     try {
-        const examinationUpdated = await Examination.findByIdAndUpdate(examination_id, data)
+        const examinationUpdated = await Examination.findByIdAndUpdate(examination_id, data, {new: true})
             .populate('doctor');
         console.log(examinationUpdated);
         return res.status(200).json({
@@ -80,8 +80,38 @@ const deleteExamination = async (req, res) => {
     });
 };
 
+const getAllExaminationOfDoctor = async (req, res) => {
+    const errors = {};
+    const {doctor_id} = req.params;
+    const {
+        user
+    } = req;
+    const filter = {};
+    if (user._id) {
+        filter._id = doctor_id;
+    }
+    console.log(doctor_id);
+    console.log(filter._id);
+    try {
+        const list_examination = await Examination.find(filter).populate('examination_list');
+        console.log(list_examination);
+        return res.json({
+            success: true,
+            data: list_examination,
+            statusCode: 200
+        });
+    } catch (error) {
+        return res.json({
+            success: true,
+            data: [],
+            statusCode: 200
+        });
+    }
+};
+
 module.exports = {
     createExamination,
     updateExamination,
     deleteExamination,
+    getAllExaminationOfDoctor,
 };

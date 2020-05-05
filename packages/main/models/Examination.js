@@ -15,4 +15,4 @@ const examinationSchema = new Schema({
         required: true,
     },
 }, {timestamp: true});
-module.exports = mongoose.model('Specialist', examinationSchema);
+module.exports = mongoose.model('Examination', examinationSchema);

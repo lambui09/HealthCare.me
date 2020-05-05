@@ -5,4 +5,5 @@ const router = express.Router();
 router.post('/', passport.authenticate('jwt', {session: false}), ExaminationController.createExamination);
 router.delete('/:examination_id', passport.authenticate('jwt', {session: false}), ExaminationController.deleteExamination);
 router.patch('/:examination_id', passport.authenticate('jwt', {session: false}), ExaminationController.updateExamination);
+router.get('/:doctor_id',passport.authenticate('jwt', {session: false}), ExaminationController.getAllExaminationOfDoctor);
 module.exports = router;

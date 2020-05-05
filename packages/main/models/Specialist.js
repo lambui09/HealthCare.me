@@ -13,10 +13,10 @@ const specialistSchema = new Schema({
         type: String,
         default: ""
     },
-    doctor_id: {
+    list_doctor: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Doctor',
         required: true,
-    },
+    }],
 }, {timestamp: true});
 module.exports = mongoose.model('Specialist', specialistSchema);

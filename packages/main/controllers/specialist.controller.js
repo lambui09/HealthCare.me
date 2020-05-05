@@ -27,6 +27,7 @@ const createSpecialist = async (req, res) => {
         })
     }
 };
+
 const updateSpecialist = async (req, res) => {
     const errors = {};
     const {
@@ -35,7 +36,7 @@ const updateSpecialist = async (req, res) => {
     const data = req.body;
 
     try {
-        const specialistUpdated = await Specialist.findByIdAndUpdate(specialist_id, data)
+        const specialistUpdated = await Specialist.findByIdAndUpdate(specialist_id, data, {new: true})
             .populate('doctor');
         console.log(specialistUpdated);
         return res.status(200).json({
@@ -80,6 +81,10 @@ const deleteSpecialist = async (req, res) => {
             specialistDeleted,
         },
     });
+};
+
+const getAllDoctorOfSpecialist = async (req, res) => {
+
 };
 
 module.exports = {

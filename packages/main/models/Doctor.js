@@ -75,15 +75,14 @@ const doctorSchema = new Schema({
         type: String,
         default: ""
     },
-    examination:[{
-        type:mongoose.Schema.Types.ObjectId,
+    examination_list: [{
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Examination'
     }],
-    specialist:{
+    specialist: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Speci'
+        ref: 'Specialist'
     }
-
 }, {
     timestamp: true
 });
