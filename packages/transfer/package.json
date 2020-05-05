@@ -1,0 +1,11 @@
+{
+  "name": "@healthcare/transfer",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "An Ng. Quang",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-schedule": "^1.3.2"
+  }
+}
