@@ -9,7 +9,7 @@ const examinationSchema = new Schema({
         type: String,
         default: 'https://fortisbangalore.com/frontend/docimage/doctor%20icon%20male-1548060684.jpg'
     },
-    doctor_id: {
+    creator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Doctor',
         required: true,
