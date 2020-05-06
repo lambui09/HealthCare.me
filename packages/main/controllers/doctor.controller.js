@@ -1,16 +1,19 @@
 const Doctor = require('../models/Doctor');
 const Favorite = require('../models/Favorite');
+const Specialist = require('../models/Specialist');
 
 const updateDoctor = async (req, res) => {
-    const { doctor_id } = req.params;
-    let { body: data } = req;
-
+    //Todo update doctor examination + specialist
+    const errors = {};
+    const {doctor_id} = req.params;
+    let {body: data} = req;
     if (data.first_name || data.last_name) {
         const full_name = `${data.first_name} ${data.last_name}`;
         data.full_name = full_name;
     }
     try {
         const doctorUpdated = await Doctor.findByIdAndUpdate(doctor_id, data, {new: true});
+        console.log(doctorUpdated);
         return res.json({
             success: true,
             data: doctorUpdated,
@@ -61,7 +64,7 @@ const searchDoctor = async (req, res) => {
 };
 
 const getDoctor = async (req, res) => {
-    const { doctor_id } = req.query;
+    const {doctor_id} = req.query;
     const filter = {};
     if (doctor_id) {
         filter._id = doctor_id;

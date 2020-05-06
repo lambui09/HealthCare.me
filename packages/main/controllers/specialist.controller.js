@@ -1,15 +1,18 @@
 const Specialist = require('../models/Specialist');
+const Doctor = require('../models/Doctor');
 const createSpecialist = async (req, res) => {
     const errors = {};
     const {
-        service_name,
+        name,
+        description,
     } = req.body;
     const {
         user
     } = req;
     try {
         const newSpecialist = new Specialist();
-        newSpecialist.service_name = service_name;
+        newSpecialist.name = name;
+        newSpecialist.description = description;
         newSpecialist.doctor_id = user._id;
         const newSpecialistCreated = await newSpecialist.save();
         return res.status(200).json({
@@ -25,6 +28,7 @@ const createSpecialist = async (req, res) => {
         })
     }
 };
+
 const updateSpecialist = async (req, res) => {
     const errors = {};
     const {
@@ -33,7 +37,7 @@ const updateSpecialist = async (req, res) => {
     const data = req.body;
 
     try {
-        const specialistUpdated = await Specialist.findByIdAndUpdate(specialist_id, data)
+        const specialistUpdated = await Specialist.findByIdAndUpdate(specialist_id, data, {new: true})
             .populate('doctor');
         console.log(specialistUpdated);
         return res.status(200).json({
@@ -53,9 +57,9 @@ const deleteSpecialist = async (req, res) => {
     const errors = {};
     const {specialist_id} = req.params;
     let specialistDeleted = null;
-    try{
+    try {
         specialistDeleted = await Specialist.findByIdAndDelete(specialist_id);
-    }catch (error) {
+    } catch (error) {
         console.log(error);
         errors.error = 'Can\'t delete specialist. Please try again later';
         return res.status(500).json({
@@ -63,8 +67,8 @@ const deleteSpecialist = async (req, res) => {
             errors,
         })
     }
-    if (!specialistDeleted){
-        errors.error = 'Can\'t delete tour. Please try again later';
+    if (!specialistDeleted) {
+        errors.error = 'Can\'t delete specialist. Please try again later';
         return res.status(400).json(
             {
                 success: false,
@@ -80,8 +84,30 @@ const deleteSpecialist = async (req, res) => {
     });
 };
 
+const getAllDoctorOfSpecialist = async (req, res) => {
+    const {specialist_id} = req.params;
+    try {
+        const doctorList = Doctor.find({specialist: specialist_id}).lean();
+        return res.status(200).json({
+            success: true,
+            data: doctorList,
+        })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            data: []
+        });
+    }
+};
+
+const getAllSpecialist = async (req, res) => {
+
+};
+
 module.exports = {
     createSpecialist,
     updateSpecialist,
     deleteSpecialist,
+    getAllDoctorOfSpecialist,
+    getAllSpecialist
 };
