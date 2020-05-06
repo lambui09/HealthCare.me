@@ -1,4 +1,5 @@
 const Specialist = require('../models/Specialist');
+const Doctor = require('../models/Doctor');
 const createSpecialist = async (req, res) => {
     const errors = {};
     const {
@@ -84,18 +85,29 @@ const deleteSpecialist = async (req, res) => {
 };
 
 const getAllDoctorOfSpecialist = async (req, res) => {
-    //Todo update
     const {specialist_id} = req.params;
-    let listDoctor = [];
+    try {
+        const doctorList = Doctor.find({specialist: specialist_id}).lean();
+        return res.status(200).json({
+            success: true,
+            data: doctorList,
+        })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            data: []
+        });
+    }
 };
 
-const getAllSpecialist = async (req, res) =>{
-    //Todo update
+const getAllSpecialist = async (req, res) => {
+
 };
 
 module.exports = {
     createSpecialist,
     updateSpecialist,
     deleteSpecialist,
-    getAllDoctorOfSpecialist
+    getAllDoctorOfSpecialist,
+    getAllSpecialist
 };
