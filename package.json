@@ -1,14 +1,11 @@
 {
-  "name": "healthcare_backend",
+  "name": "@healthcare/backend",
   "private": true,
   "scripts": {
-    "install": "lerna bootstrap",
+    "bootstrap": "lerna bootstrap",
     "dev": "lerna run dev --stream"
   },
   "devDependencies": {
     "lerna": "^3.20.2"
-  },
-  "dependencies": {
-    "dotenv": "^8.2.0"
   }
 }
