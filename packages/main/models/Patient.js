@@ -11,6 +11,9 @@ const patientSchema = new Schema({
     last_name: {
         type: String,
     },
+    full_name: {
+        type: String,
+    },
     birth_day: {
         type: String,
     },
@@ -42,10 +45,6 @@ const patientSchema = new Schema({
         type: Boolean,
         default: false
     },
-    list_symptom: {
-        type: [String],
-        default: [],
-    },
     push_notification_enabled: {
         type: Boolean,
         default: false
@@ -53,6 +52,10 @@ const patientSchema = new Schema({
     unseen_notification_count: {
         type: Number,
         default: 0
+    },
+    device_token: {
+        type: String,
+        default: "",
     },
     user_id: {
         type: mongoose.Schema.Types.ObjectId,

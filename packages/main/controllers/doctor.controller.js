@@ -234,6 +234,33 @@ const getDetailDoctor = async (req, res) => {
         },
     });
 };
+const getDoctorNearBy = async (req, res) => {
+    const {latitude: lat, longitude: lng} = req.query;
+    const distance = 10000;
+    try {
+        const doctorList = await Doctor.find({
+            location: {
+                $near: {
+                    $geometry: {
+                        type: 'Point',
+                        coordinates: [lat, lng],
+                    },
+                    $maxDistance: distance,
+                },
+            },
+        }).populate('specialist').lean();
+        return res.status(200).json({
+            success: true,
+            data: doctorList
+        })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            data: []
+        })
+    }
+};
+
 
 module.exports = {
     updateDoctor,
@@ -242,4 +269,5 @@ module.exports = {
     getAllDoctor,
     getDetailDoctor,
     addFavorite,
+    getDoctorNearBy
 };

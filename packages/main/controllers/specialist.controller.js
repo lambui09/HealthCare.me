@@ -101,7 +101,18 @@ const getAllDoctorOfSpecialist = async (req, res) => {
 };
 
 const getAllSpecialist = async (req, res) => {
-
+    try{
+        const listSpecialist = await Specialist.find().lean();
+        return res.status(200).json({
+            success: true,
+            data: listSpecialist
+        })
+    }catch (error) {
+        return res.status(200).json({
+            success: true,
+            data: [],
+        })
+    }
 };
 
 module.exports = {

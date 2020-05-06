@@ -5,4 +5,5 @@ const router = express.Router();
 router.post('/', passport.authenticate('jwt', {session: false}), SpecialistController.createSpecialist);
 router.delete('/:specialist_id', passport.authenticate('jwt', {session: false}), SpecialistController.deleteSpecialist);
 router.patch('/:specialist_id', passport.authenticate('jwt', {session: false}), SpecialistController.updateSpecialist);
+router.get('/', SpecialistController.getAllSpecialist);
 module.exports = router;

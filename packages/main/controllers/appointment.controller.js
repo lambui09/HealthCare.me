@@ -2,7 +2,7 @@ const moment = require('moment');
 const Appointment = require('../models/Appointment');
 const sendNotification = require('../helpers/sendNotification');
 const Doctor = require('../models/Doctor');
-
+const Patient = require('../models/Patient');
 const createAppointment = async (req, res) => {
     const {
         duration,
@@ -32,19 +32,22 @@ const createAppointment = async (req, res) => {
         newAppointment.patient_id = user._id;
         const appointmentCreated = await newAppointment.save();
         try{
-            doctor = Doctor.findById(doctor_id).populate('patient_id');
-            const message_notification = {
-                notification: {
-                    title: `Bạn có lịch hẹn mới với bác sĩ ${doctor.full_name}`,
-                    body: `Vào lúc ${newAppointment.time} ngày ${newAppointment.date}`
-                }
-            };
+            const doctor = await Doctor.findById(doctor_id).lean();
+            const patient = await Patient.findById(user._id).lean();
+            const title = `Bạn có lịch hẹn mới từ bệnh nhân ${patient.full_name}`;
+            const body = `Vào lúc ${newAppointment.time} ngày ${newAppointment.date}`;
             let device_token = doctor.device_token;
-            if (device_token != null){
-                sendNotification(device_token, message_notification)
+            if (device_token){
+                await sendNotification(device_token, {
+                    title,
+                    body,
+                    sender: patient._id.toString(),
+                    receiver: doctor._id.toString(),
+                }, true);
             }
         }catch (error) {
             console.log(error)
+            throw new Error(error.message);
         }
         //add send notification:
 
@@ -76,27 +79,27 @@ const updateAppointment = async (req, res) => {
     } = req;
 
     try {
-        const appointmentUpdated = await Appointment.findByIdAndUpdate(appointment_id, data).populate('doctor')
-            .populate('patient');
+        const appointmentUpdated = await Appointment.findByIdAndUpdate(appointment_id, data).populate('doctor_id')
+            .populate('patient_id').lean();
         //add send notification
-        const message_notification = {
-            notification: {
-                title: `Bác sĩ ${doctor.full_name} đã xác nhận lịch hẹn`,
-                body: `Vào lúc ${appointmentUpdated.time} ngày ${appointmentUpdated.date}`
-            }
-        };
-        let device_token = doctor.device_token;
-        if (device_token != null){
-            sendNotification(device_token, message_notification)
+        const title = `Lịch khám của bạn với bác sĩ ${appointmentUpdated.doctor_id.full_name} đã được xác nhận.`;
+        const body = `Vào lúc ${appointmentUpdated.updatedAt}`;
+        let device_token = appointmentUpdated.patient_id.device_token;
+        if (device_token){
+            sendNotification(device_token, {
+                title,
+                body,
+                sender: appointmentUpdated.doctor_id._id.toString(),
+                receiver: appointmentUpdated.patient_id._id.toString(),
+            }, false)
         }
-
-        return res.json({
+        return res.status(200).json({
             success: true,
             data: appointmentUpdated,
             statusCode: 200,
         });
     } catch (error) {
-        return res.json({
+        return res.status(200).json({
             success: false,
             errorMessage: 'Server error',
             statusCode: 500,
@@ -109,9 +112,11 @@ const getListAppointment = async (req, res) => {
         doctor_id,
         patient_id,
         appointment_id,
+        status,
+        status_not,
     } = req.query;
 
-    const filter = {};
+    let filter = {};
     if (doctor_id) {
         filter.doctor_id = doctor_id;
     }
@@ -122,12 +127,26 @@ const getListAppointment = async (req, res) => {
         filter.appointment_id = appointment_id;
     }
 
+    if (status) {
+        filter.status = status;
+    }
+
+    if (status_not) {
+        const newFilter = {
+            ...filter,
+            '$not': {
+                status_not,
+            }
+        };
+        filter = {...newFilter};
+    }
+
     let appointments;
     try {
         appointments = await Appointment
             .find(filter)
-            .populate('doctor')
-            .populate('patient');
+            .populate('doctor_id')
+            .populate('patient_id');
     } catch (error) {
         appointments = [];
     }
