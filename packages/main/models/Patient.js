@@ -12,7 +12,7 @@ const patientSchema = new Schema({
         type: String,
     },
     birth_day: {
-        type: Number,
+        type: String,
     },
     gender: {
         type: String,

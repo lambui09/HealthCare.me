@@ -16,6 +16,7 @@ const PatientRouter = require('./routes/patient');
 const SurveySymptomRouter = require('./routes/surveySymptom');
 const NotificationRouter = require('./routes/notification');
 const SpecialistRouter = require('./routes/specialist');
+const ExaminationRouter = require('./routes/examination');
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api/v1/patients', PatientRouter);
 app.use('/api/v1/survey-symptoms', SurveySymptomRouter);
 app.use('/api/v1/notifications', NotificationRouter);
 app.use('/api/v1/specialists', SpecialistRouter);
+app.use('/api/v1/examinations',ExaminationRouter);
 
 app.listen(3000, (err) => {
     if (err) throw err;
