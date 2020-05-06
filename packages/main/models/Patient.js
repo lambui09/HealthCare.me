@@ -42,10 +42,6 @@ const patientSchema = new Schema({
         type: Boolean,
         default: false
     },
-    list_symptom: {
-        type: [String],
-        default: [],
-    },
     push_notification_enabled: {
         type: Boolean,
         default: false

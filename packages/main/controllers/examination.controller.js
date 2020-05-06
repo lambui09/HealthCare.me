@@ -101,9 +101,25 @@ const getAllExaminationOfDoctor = async (req, res) => {
     }
 };
 
+const getAllExamination = async (req, res) => {
+    try {
+        const listExamination = await Examination.find().lean();
+        return res.status(200).json({
+            success: true,
+            data: listExamination,
+        })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            data: [],
+        })
+    }
+};
+
 module.exports = {
     createExamination,
     updateExamination,
     deleteExamination,
     getAllExaminationOfDoctor,
+    getAllExamination,
 };

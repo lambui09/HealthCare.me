@@ -6,4 +6,5 @@ router.post('/', passport.authenticate('jwt', {session: false}), ExaminationCont
 router.delete('/:examination_id', passport.authenticate('jwt', {session: false}), ExaminationController.deleteExamination);
 router.patch('/:examination_id', passport.authenticate('jwt', {session: false}), ExaminationController.updateExamination);
 router.get('/:doctor_id',passport.authenticate('jwt', {session: false}), ExaminationController.getAllExaminationOfDoctor);
+router.get('/',ExaminationController.getAllExamination);
 module.exports = router;

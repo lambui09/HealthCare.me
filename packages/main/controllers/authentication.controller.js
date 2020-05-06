@@ -9,6 +9,7 @@ const signup = async (req, res) => {
         phone_number,
         password,
         role,
+        device_token,
     } = req.body;
     try {
         const passwordHashed = bcrypt.hashSync(password, 13);
@@ -16,6 +17,7 @@ const signup = async (req, res) => {
         newUser.phone_number = phone_number;
         newUser.password = passwordHashed;
         newUser.role = role;
+        newUser.device_token = device_token;
         await newUser.save();
         const Model = role === 'DOCTOR' ? Doctor : Patient;
         const newModel = new Model();
