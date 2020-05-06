@@ -84,11 +84,18 @@ const deleteSpecialist = async (req, res) => {
 };
 
 const getAllDoctorOfSpecialist = async (req, res) => {
+    //Todo update
+    const {specialist_id} = req.params;
+    let listDoctor = [];
+};
 
+const getAllSpecialist = async (req, res) =>{
+    //Todo update
 };
 
 module.exports = {
     createSpecialist,
     updateSpecialist,
     deleteSpecialist,
+    getAllDoctorOfSpecialist
 };

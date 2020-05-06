@@ -77,6 +77,7 @@ const doctorSchema = new Schema({
     },
     examination_list: [{
         type: mongoose.Schema.Types.ObjectId,
+        default: [],
         ref: 'Examination'
     }],
     specialist: {

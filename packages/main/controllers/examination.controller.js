@@ -81,19 +81,11 @@ const deleteExamination = async (req, res) => {
 };
 
 const getAllExaminationOfDoctor = async (req, res) => {
-    const errors = {};
     const {doctor_id} = req.params;
-    const {
-        user
-    } = req;
-    const filter = {};
-    if (user._id) {
-        filter._id = doctor_id;
-    }
     console.log(doctor_id);
-    console.log(filter._id);
+    console.log(filter.doctor_id);
     try {
-        const list_examination = await Examination.find(filter).populate('examination_list');
+        const list_examination = await Examination.find(doctor_id).populate('examination_list').lean();
         console.log(list_examination);
         return res.json({
             success: true,
