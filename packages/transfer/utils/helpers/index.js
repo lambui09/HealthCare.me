@@ -1,4 +1,4 @@
-const {fetchPatientFromMongo, fetchDoctorFromMongo, fetchSymptomFromMongo} = require("./fetch-data");
+const {fetchPatientFromMongo, fetchDoctorFromMongo, fetchSymptomFromMongo, fetchCommentFromMongo} = require("./fetch-data");
 
 const { driver } = require('../../config/database/neo4j');
 
@@ -127,8 +127,46 @@ const addSymptomToNeo4j = async () => {
     }
 }
 
+const addCommentToNeo4j = async () => {
+    console.log('Start transfer Comment...');
+    const session = driver.session();
+    const txc = session.beginTransaction()
+    try {
+        const comments = await fetchCommentFromMongo();
+        for (const item of comments) {
+            const queryStr = `
+                MATCH (patient:Patient {
+                    _id:$commenter
+                })
+                MATCH (doctor:Doctor {
+                    _id:$doctor
+                })
+                MERGE (doctor)<-[r:RATED]-(patient)
+                ON MATCH SET r.score=r.score + $scoreRated
+                ON CREATE SET r.score=$scoreRated
+                `;
+
+            await txc.run(queryStr, {
+                commenter: item.commenter.toString(),
+                doctor: item.doctor.toString(),
+                scoreRated: item.rate_star * 5 / 5,
+            });
+        }
+
+        await txc.commit();
+        console.log('Transfer Comment Success! Total: ' + comments.length);
+    } catch (e) {
+        await txc.rollback()
+        console.log(e);
+        console.log('Transfer Comment failed!');
+    } finally {
+        await session.close()
+    }
+}
+
 module.exports = {
     addPatientToNeo4j,
     addDoctorToNeo4j,
     addSymptomToNeo4j,
+    addCommentToNeo4j,
 }
