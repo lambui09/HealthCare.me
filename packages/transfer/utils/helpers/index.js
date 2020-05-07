@@ -1,4 +1,4 @@
-const {fetchPatientFromMongo, fetchDoctorFromMongo, fetchSymptomFromMongo, fetchCommentFromMongo} = require("./fetch-data");
+const {fetchPatientFromMongo, fetchDoctorFromMongo, fetchSymptomFromMongo, fetchCommentFromMongo, fetchFavoriteFromMongo} = require("./fetch-data");
 
 const { driver } = require('../../config/database/neo4j');
 
@@ -142,7 +142,7 @@ const addCommentToNeo4j = async () => {
                     _id:$doctor
                 })
                 MERGE (doctor)<-[r:RATED]-(patient)
-                ON MATCH SET r.score=r.score + $scoreRated
+                ON MATCH SET r.score=$scoreRated
                 ON CREATE SET r.score=$scoreRated
                 `;
 
@@ -164,9 +164,47 @@ const addCommentToNeo4j = async () => {
     }
 }
 
+const addFavoriteToNeo4j = async () => {
+    console.log('Start transfer Favorite...');
+    const session = driver.session();
+    const txc = session.beginTransaction()
+    try {
+        const favorites = await fetchFavoriteFromMongo();
+        for (const item of favorites) {
+            const queryStr = `
+                MATCH (patient:Patient {
+                    _id:$favorite_personal
+                })
+                MATCH (doctor:Doctor {
+                    _id:$doctor
+                })
+                MERGE (doctor)<-[r:FAVORITED]-(patient)
+                ON MATCH SET r.score=$scoreFavorited
+                ON CREATE SET r.score=$scoreFavorited
+                `;
+
+            await txc.run(queryStr, {
+                favorite_personal: item.favorite_personal.toString(),
+                doctor: item.doctor.toString(),
+                scoreFavorited: 1,
+            });
+        }
+
+        await txc.commit();
+        console.log('Transfer Favorite Success! Total: ' + favorites.length);
+    } catch (e) {
+        await txc.rollback()
+        console.log(e);
+        console.log('Transfer Favorite failed!');
+    } finally {
+        await session.close()
+    }
+}
+
 module.exports = {
     addPatientToNeo4j,
     addDoctorToNeo4j,
     addSymptomToNeo4j,
     addCommentToNeo4j,
+    addFavoriteToNeo4j
 }

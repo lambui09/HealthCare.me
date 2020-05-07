@@ -2,6 +2,7 @@ const Patient = require('../../models/Patient');
 const Doctor = require('../../models/Doctor');
 const Symptom = require('../../models/Symptom');
 const Comment = require('../../models/Comment');
+const Favorite = require('../../models/Favorite');
 
 const fetchPatientFromMongo = async () => {
     try {
@@ -35,9 +36,18 @@ fetchCommentFromMongo = async () => {
     }
 };
 
+fetchFavoriteFromMongo = async () => {
+    try {
+        return await Favorite.find().lean();
+    } catch (error) {
+        return [];
+    }
+};
+
 module.exports = {
     fetchPatientFromMongo,
     fetchDoctorFromMongo,
     fetchSymptomFromMongo,
-    fetchCommentFromMongo
+    fetchCommentFromMongo,
+    fetchFavoriteFromMongo
 }

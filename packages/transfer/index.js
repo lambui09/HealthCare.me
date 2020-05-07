@@ -2,7 +2,7 @@ require('dotenv').config();
 require('./config/database/mongo');
 require('./config/database/neo4j');
 
-const { addPatientToNeo4j, addDoctorToNeo4j, addSymptomToNeo4j, addCommentToNeo4j } = require('./utils/helpers');
+const { addPatientToNeo4j, addDoctorToNeo4j, addSymptomToNeo4j, addCommentToNeo4j, addFavoriteToNeo4j } = require('./utils/helpers');
 
 console.log('========Transfer Service========');
 
@@ -12,6 +12,7 @@ console.log('========Transfer Service========');
     await addDoctorToNeo4j();
     await addSymptomToNeo4j();
     await addCommentToNeo4j();
+    await addFavoriteToNeo4j();
     console.log('Start transfer end');
 })();
 
