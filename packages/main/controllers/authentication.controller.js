@@ -79,10 +79,17 @@ const login = async (req, res) => {
         await User.findByIdAndUpdate(user_id, {
             is_exp: false,
         });
+        let userItem = null;
+        if (user.role === 'DOCTOR'){
+            userItem = await Doctor.findOne({user_id :user_id }).lean();
+        }
+        userItem = await Patient.findOne({user_id :user_id }).lean();
+        const id_login = userItem._id;
         return res.json({
             success: true,
             data: {
-                token: token
+                token: token,
+                user_id: id_login,
             },
             statusCode: 200
         });
