@@ -5,4 +5,5 @@ const router = express.Router();
 router.post('/', surveySymptom.createSymptom);
 router.patch('/:symptom_id', passport.authenticate('jwt', {session: false}), surveySymptom.updateSymptom);
 router.delete('/:symptom_id', passport.authenticate('jwt', {session: false}), surveySymptom.deleteSymptom);
+router.get('/', surveySymptom.getAllSymptom);
 module.exports = router;
