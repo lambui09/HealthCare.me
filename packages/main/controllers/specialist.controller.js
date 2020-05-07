@@ -13,7 +13,7 @@ const createSpecialist = async (req, res) => {
         const newSpecialist = new Specialist();
         newSpecialist.name = name;
         newSpecialist.description = description;
-        newSpecialist.doctor_id = user._id;
+        newSpecialist.creator = user._id;
         const newSpecialistCreated = await newSpecialist.save();
         return res.status(200).json({
             success: true,

@@ -6,6 +6,7 @@ const updateDoctor = async (req, res) => {
     //Todo update doctor examination + specialist
     const errors = {};
     const {doctor_id} = req.params;
+    console.log(doctor_id);
     let {body: data} = req;
     if (data.first_name || data.last_name) {
         const full_name = `${data.first_name} ${data.last_name}`;
