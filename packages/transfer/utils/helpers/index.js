@@ -1,4 +1,4 @@
-const {fetchPatientFromMongo, fetchDoctorFromMongo} = require("./fetch-data");
+const {fetchPatientFromMongo, fetchDoctorFromMongo, fetchSymptomFromMongo} = require("./fetch-data");
 
 const { driver } = require('../../config/database/neo4j');
 
@@ -92,8 +92,43 @@ const addDoctorToNeo4j = async () => {
     }
 };
 
+const addSymptomToNeo4j = async () => {
+    console.log('Start transfer Symptom...');
+    const session = driver.session();
+    const txc = session.beginTransaction()
+    try {
+        const symptoms = await fetchSymptomFromMongo();
+        for (const item of symptoms) {
+            const queryStr = `
+                MERGE (symptom:Symptom {
+                    _id: $_id
+                })
+                ON CREATE SET
+                    symptom.name=$name
+                ON MATCH SET
+                    symptom.name=$name
+                RETURN symptom.name as name
+                `;
+
+            await txc.run(queryStr, {
+                _id: item._id.toString(),
+                name: item.name || ''
+            });
+        }
+
+        await txc.commit();
+        console.log('Transfer Symptom Success! Total: ' + symptoms.length);
+    } catch (e) {
+        await txc.rollback()
+        console.log(e);
+        console.log('Transfer Symptom failed!');
+    } finally {
+        await session.close()
+    }
+}
 
 module.exports = {
     addPatientToNeo4j,
-    addDoctorToNeo4j
+    addDoctorToNeo4j,
+    addSymptomToNeo4j,
 }
