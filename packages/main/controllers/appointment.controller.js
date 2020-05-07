@@ -46,7 +46,7 @@ const createAppointment = async (req, res) => {
                 }, true);
             }
         }catch (error) {
-            console.log(error)
+            console.log(error);
             throw new Error(error.message);
         }
         //add send notification:
