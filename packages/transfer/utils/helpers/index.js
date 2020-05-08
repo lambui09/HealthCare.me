@@ -251,6 +251,27 @@ const addAppointmentToNeo4j = async () => {
     }
 }
 
+const deleteAllData = async () => {
+    console.log('Delete All Data...');
+    const session = driver.session();
+    const txc = session.beginTransaction()
+    try {
+        const queryStr = `
+            MATCH (n) DETACH DELETE n
+        `;
+
+        await txc.run(queryStr, {});
+        await txc.commit();
+        console.log('Delete Success!');
+    } catch (e) {
+        await txc.rollback()
+        console.log(e);
+        console.log('Delete failed!');
+    } finally {
+        await session.close()
+    }
+};
+
 
 module.exports = {
     addPatientToNeo4j,
@@ -258,5 +279,6 @@ module.exports = {
     addSymptomToNeo4j,
     addCommentToNeo4j,
     addFavoriteToNeo4j,
-    addAppointmentToNeo4j
+    addAppointmentToNeo4j,
+    deleteAllData
 }

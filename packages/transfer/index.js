@@ -3,13 +3,14 @@ require('./config/database/mongo');
 require('./config/database/neo4j');
 
 const { addPatientToNeo4j, addDoctorToNeo4j, addSymptomToNeo4j, addCommentToNeo4j, addFavoriteToNeo4j,
-    addAppointmentToNeo4j,
+    addAppointmentToNeo4j, deleteAllData
 } = require('./utils/helpers');
 
 console.log('========Transfer Service========');
 
 (async () => {
     console.log('Start transfer data');
+    await deleteAllData();
     await addPatientToNeo4j();
     await addDoctorToNeo4j();
     await addSymptomToNeo4j();
