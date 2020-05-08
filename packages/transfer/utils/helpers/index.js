@@ -1,4 +1,7 @@
-const {fetchPatientFromMongo, fetchDoctorFromMongo, fetchSymptomFromMongo, fetchCommentFromMongo, fetchFavoriteFromMongo} = require("./fetch-data");
+const {fetchPatientFromMongo, fetchDoctorFromMongo, fetchSymptomFromMongo, fetchCommentFromMongo,
+    fetchFavoriteFromMongo,
+    fetchAppointmentFromMongo,
+} = require("./fetch-data");
 
 const { driver } = require('../../config/database/neo4j');
 
@@ -201,10 +204,59 @@ const addFavoriteToNeo4j = async () => {
     }
 }
 
+const addAppointmentToNeo4j = async () => {
+    console.log('Start transfer Appointment...');
+    const session = driver.session();
+    const txc = session.beginTransaction()
+    try {
+        const appointments = await fetchAppointmentFromMongo();
+        for (const item of appointments) {
+            const symptoms = item.symptom_list;
+            for (let item_id of symptoms) {
+                const queryStr = `
+                MATCH (patient:Patient {
+                    _id:$patient
+                })
+                MATCH (doctor:Doctor {
+                    _id:$doctor
+                })
+                MATCH (symptom:Symptom {
+                    _id:$symptom
+                })
+                MERGE (symptom)<-[r:BOOKED_WITH]-(patient)
+                ON MATCH SET r.score=$scoreBooked
+                ON CREATE SET r.score=$scoreBooked
+                MERGE (symptom)<-[r1:IS_BOOKED_WITH]-(doctor)
+                ON MATCH SET r1.score=$scoreBooked
+                ON CREATE SET r1.score=$scoreBooked
+             `;
+
+                await txc.run(queryStr, {
+                    patient: item.patient_id.toString(),
+                    doctor: item.doctor_id.toString(),
+                    scoreBooked: 2,
+                    symptom: item_id,
+                });
+            }
+        }
+
+        await txc.commit();
+        console.log('Transfer Appointment Success! Total: ' + appointments.length);
+    } catch (e) {
+        await txc.rollback()
+        console.log(e);
+        console.log('Transfer Appointment failed!');
+    } finally {
+        await session.close()
+    }
+}
+
+
 module.exports = {
     addPatientToNeo4j,
     addDoctorToNeo4j,
     addSymptomToNeo4j,
     addCommentToNeo4j,
-    addFavoriteToNeo4j
+    addFavoriteToNeo4j,
+    addAppointmentToNeo4j
 }
