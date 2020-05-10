@@ -9,6 +9,7 @@ const signup = async (req, res) => {
         phone_number,
         password,
         role,
+        device_token,
     } = req.body;
     try {
         const passwordHashed = bcrypt.hashSync(password, 13);
@@ -16,6 +17,7 @@ const signup = async (req, res) => {
         newUser.phone_number = phone_number;
         newUser.password = passwordHashed;
         newUser.role = role;
+        newUser.device_token = device_token;
         await newUser.save();
         const Model = role === 'DOCTOR' ? Doctor : Patient;
         const newModel = new Model();
@@ -77,10 +79,17 @@ const login = async (req, res) => {
         await User.findByIdAndUpdate(user_id, {
             is_exp: false,
         });
+        let userItem = null;
+        if (user.role === 'DOCTOR'){
+            userItem = await Doctor.findOne({user_id :user_id }).lean();
+        }
+        userItem = await Patient.findOne({user_id :user_id }).lean();
+        const id_login = userItem._id;
         return res.json({
             success: true,
             data: {
-                token: token
+                token: token,
+                user_id: id_login,
             },
             statusCode: 200
         });

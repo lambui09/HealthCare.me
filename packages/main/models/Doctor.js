@@ -47,10 +47,6 @@ const doctorSchema = new Schema({
         type: Boolean,
         default: false
     },
-    medical_doctor: {
-        type: String,
-        default: ""
-    },
     awards: {
         type: String,
         default: ""

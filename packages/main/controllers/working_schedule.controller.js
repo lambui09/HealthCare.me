@@ -99,7 +99,7 @@ const getAvailableTime = async (req, res) => {
     }
 };
 
-function rangeTime(start, end, step = 30) {
+function rangeTime(start, end, step = 15) {
     const startArr = start.split(':');
     const endArr = end.split(':');
     let startHour = +startArr[0];

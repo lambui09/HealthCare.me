@@ -12,11 +12,11 @@ const specialistSchema = new Schema({
     description: {
         type: String,
         default: ""
-    },
-    list_doctor: [{
+    } ,
+    creator:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Doctor',
         required: true,
-    }],
+    }
 }, {timestamp: true});
 module.exports = mongoose.model('Specialist', specialistSchema);

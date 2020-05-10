@@ -2,11 +2,11 @@ const Symptom = require('../models/Symptom');
 const createSymptom = async (req, res) => {
     const errors = {};
     const {
-        symptom_name
+        name
     } = req.body;
     try {
         const newSurveySymptom = new Symptom();
-        newSurveySymptom.symptom_name = symptom_name;
+        newSurveySymptom.name = name;
         const surveySurveyCreated = await newSurveySymptom.save();
         return res.status(200).json({
             success: true,
@@ -18,6 +18,7 @@ const createSymptom = async (req, res) => {
         errors.error = 'Server error';
         return res.status(500).json({
             success: false,
+            errors,
         })
     }
 };
@@ -78,8 +79,24 @@ const deleteSymptom = async (req, res) => {
     });
 };
 
+const getAllSymptom = async (req, res) => {
+    try{
+        const listSymptom = await Symptom.find().lean();
+        return res.status(200).json({
+            success: true,
+            data: listSymptom,
+        })
+    }catch (error) {
+        return res.status(200).json({
+            success: true,
+            data: [],
+        })
+    }
+};
+
 module.exports = {
     createSymptom,
     updateSymptom,
     deleteSymptom,
+    getAllSymptom,
 };

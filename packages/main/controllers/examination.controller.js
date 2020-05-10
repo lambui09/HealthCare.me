@@ -83,13 +83,13 @@ const deleteExamination = async (req, res) => {
 const getAllExaminationOfDoctor = async (req, res) => {
     const {doctor_id} = req.params;
     console.log(doctor_id);
-    console.log(filter.doctor_id);
     try {
-        const list_examination = await Examination.find(doctor_id).populate('examination_list').lean();
-        console.log(list_examination);
+        const doctorItem = await Doctor.findById(doctor_id).populate('examination_list').lean();
+        const exam_list = doctorItem.examination_list;
+        //console.log(list_examination);
         return res.json({
             success: true,
-            data: list_examination,
+            data: exam_list,
             statusCode: 200
         });
     } catch (error) {
@@ -101,9 +101,25 @@ const getAllExaminationOfDoctor = async (req, res) => {
     }
 };
 
+const getAllExamination = async (req, res) => {
+    try {
+        const listExamination = await Examination.find().lean();
+        return res.status(200).json({
+            success: true,
+            data: listExamination,
+        })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            data: [],
+        })
+    }
+};
+
 module.exports = {
     createExamination,
     updateExamination,
     deleteExamination,
     getAllExaminationOfDoctor,
+    getAllExamination,
 };

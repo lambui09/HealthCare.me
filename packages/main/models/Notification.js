@@ -13,5 +13,22 @@ const notificationSchema = new Schema({
         type : Boolean,
         default: false
     },
+    patient: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'Patient'
+    },
+    doctor: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'Doctor'
+    },
+    isSent: {
+        type: Boolean,
+        required: true,
+    },
+    time_remainder_send_notification:{
+        type: Date,
+    }
 }, {timestamp: true});
 module.exports = mongoose.model('Notification', notificationSchema);
