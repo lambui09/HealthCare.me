@@ -131,7 +131,7 @@ const addFavorite = async (req, res) => {
         const newDoctorFavorite = new Favorite(data);
         let doctorFavoriteCreated = null;
         try {
-            doctorFavoriteCreated = await newDoctorFavorite.save(data)
+            doctorFavoriteCreated = await newDoctorFavorite.save()
         } catch (error) {
             console.log(error);
             doctorFavoriteCreated = null;
