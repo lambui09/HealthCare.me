@@ -116,6 +116,7 @@ const addFavorite = async (req, res) => {
             doctor: doctor_id,
             patient: patient_id
         });
+        console.log(favorite)
     } catch (error) {
         console.log(error);
         favorite = null;
