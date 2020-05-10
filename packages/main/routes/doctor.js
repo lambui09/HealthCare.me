@@ -8,7 +8,7 @@ router.patch('/:doctor_id', doctorController.updateDoctor);
 router.get('/search', doctorController.searchDoctor);
 router.get('/', doctorController.getDoctor);
 router.get('/:doctor_id',doctorController.getDetailDoctor);
-router.get('/:doctor_id/favorite',passport.authenticate('jwt', {
+router.post('/:doctor_id/favorite',passport.authenticate('jwt', {
     session: false
 }),doctorController.addFavorite);
 router.post('/:doctor_id/comments',passport.authenticate('jwt', {

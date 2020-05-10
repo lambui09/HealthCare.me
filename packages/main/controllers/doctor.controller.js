@@ -112,6 +112,7 @@ const addFavorite = async (req, res) => {
     try {
         favorite = await Favorite.findOne({
             doctor: doctor_id,
+            favorite_personal: user.id,
         })
     } catch (error) {
         console.log(error);
@@ -127,7 +128,7 @@ const addFavorite = async (req, res) => {
         const newDoctorFavorite = new Favorite(data);
         let doctorFavoriteCreated = null;
         try {
-            doctorFavoriteCreated = await newDoctorFavorite.save(data)
+            doctorFavoriteCreated = await newDoctorFavorite.save();
         } catch (error) {
             console.log(error);
             doctorFavoriteCreated = null;
@@ -152,6 +153,7 @@ const addFavorite = async (req, res) => {
     try {
         doctorFavoriteDeleted = await Favorite.findOneAndDelete({
             doctor: doctor_id,
+            favorite_personal: user.id,
         })
     } catch (error) {
         console.log(error);
