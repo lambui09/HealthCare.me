@@ -144,8 +144,8 @@ const addCommentToNeo4j = async () => {
                 MATCH (doctor:Doctor {
                     _id:$doctor
                 })
-                MERGE (doctor)<-[r:RATED]-(patient)
-                ON MATCH SET r.score=$scoreRated
+                MERGE (doctor)<-[r:INTERACTIVE]-(patient)
+                ON MATCH SET r.score=r.score + $scoreRated
                 ON CREATE SET r.score=$scoreRated
                 `;
 
@@ -181,8 +181,8 @@ const addFavoriteToNeo4j = async () => {
                 MATCH (doctor:Doctor {
                     _id:$doctor
                 })
-                MERGE (doctor)<-[r:FAVORITED]-(patient)
-                ON MATCH SET r.score=$scoreFavorited
+                MERGE (doctor)<-[r:INTERACTIVE]-(patient)
+                ON MATCH SET r.score=r.score + $scoreFavorited
                 ON CREATE SET r.score=$scoreFavorited
                 `;
 
@@ -214,22 +214,22 @@ const addAppointmentToNeo4j = async () => {
             const symptoms = item.symptom_list;
             for (let item_id of symptoms) {
                 const queryStr = `
-                MATCH (patient:Patient {
-                    _id:$patient
-                })
-                MATCH (doctor:Doctor {
-                    _id:$doctor
-                })
-                MATCH (symptom:Symptom {
-                    _id:$symptom
-                })
-                MERGE (symptom)<-[r:BOOKED_WITH]-(patient)
-                ON MATCH SET r.score=$scoreBooked
-                ON CREATE SET r.score=$scoreBooked
-                MERGE (symptom)<-[r1:IS_BOOKED_WITH]-(doctor)
-                ON MATCH SET r1.score=$scoreBooked
-                ON CREATE SET r1.score=$scoreBooked
-             `;
+                    MATCH (patient:Patient {
+                        _id:$patient
+                    })
+                    MATCH (doctor:Doctor {
+                        _id:$doctor
+                    })
+                    MATCH (symptom:Symptom {
+                        _id:$symptom
+                    })
+                    MERGE (symptom)<-[r:BOOKED_WITH]-(patient)
+                    ON MATCH SET r.score=$scoreBooked
+                    ON CREATE SET r.score=$scoreBooked
+                    MERGE (symptom)<-[r1:IS_BOOKED_WITH]-(doctor)
+                    ON MATCH SET r1.score=$scoreBooked
+                    ON CREATE SET r1.score=$scoreBooked
+                `;
 
                 await txc.run(queryStr, {
                     patient: item.patient_id.toString(),
@@ -238,6 +238,24 @@ const addAppointmentToNeo4j = async () => {
                     symptom: item_id,
                 });
             }
+
+            const queryInteractive = `
+                    MATCH (patient:Patient {
+                        _id:$patient
+                    })
+                    MATCH (doctor:Doctor {
+                        _id:$doctor
+                    })
+                    MERGE (doctor)<-[r2:INTERACTIVE]-(patient)
+                    ON MATCH SET r2.score=r2.score + $scoreBooked
+                    ON CREATE SET r2.score=$scoreBooked
+                 `;
+
+            await txc.run(queryInteractive, {
+                patient: item.patient_id.toString(),
+                doctor: item.doctor_id.toString(),
+                scoreBooked: 2,
+            });
         }
 
         await txc.commit();
@@ -271,7 +289,6 @@ const deleteAllData = async () => {
         await session.close()
     }
 };
-
 
 module.exports = {
     addPatientToNeo4j,
