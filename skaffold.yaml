@@ -14,3 +14,19 @@ build:
         manual:
           - src: 'src/**/*.js'
             dest: .
+    - image: ngquangan/healthcare-recommend
+      context: packages/recommend
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.js'
+            dest: .
+    - image: ngquangan/healthcare-transfer
+      context: packages/transfer
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.js'
+            dest: .

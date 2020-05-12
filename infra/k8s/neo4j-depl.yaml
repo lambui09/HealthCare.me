@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: neo4j-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: neo4j
+  template:
+    metadata:
+      labels:
+        app: neo4j
+    spec:
+      containers:
+        - name: neo4j
+          image: neo4j
+          env:
+            - name: NEO4J_AUTH
+              value: "neo4j/test"
+          ports:
+            - containerPort: 7474
+              name: browser
+            - containerPort: 7687
+              name: bolt
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: neo4j-srv
+spec:
+  selector:
+    app: neo4j
+  ports:
+    - name: neo4j-db
+      port: 7687
+      targetPort: 7687
