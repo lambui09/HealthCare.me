@@ -21,7 +21,7 @@ const checkPatientInteracted = async (patient_id) => {
 };
 
 const searchController = async (req, res) => {
-    const { patient_id, symptom_list } = req.body;
+    const { patient_id, symptom_list, keyword } = req.body;
     const session = driver.session();
     try {
         const hasInteracted = await checkPatientInteracted();
@@ -38,12 +38,12 @@ const searchController = async (req, res) => {
             SQRT( SUM( (r.r1.score - p1_mean)^2) * sum( (r.r2.score - p2_mean) ^2)) AS denom,
             p1, p2
             WHERE denom <> 0
-            WITH p1, p2, nom/denom AS pearson_similarty
-            WITH p1, p2, pearson_similarty
+            WITH p1, p2, nom/denom AS pearson_similarity
+            WITH p1, p2, pearson_similarity
             ORDER BY pearson_similarty DESC
             LIMIT 15
             OPTIONAL MATCH (p2)-[r:INTERACTIVE]-(d:Doctor) WHERE NOT EXISTS( (p1)-[:INTERACTIVE]-(d) )
-            RETURN d._id as _id, SUM( pearson_similarty * r.score) AS recommendation_score
+            RETURN d._id as _id, SUM( pearson_similarity * r.score) AS recommendation_score
             ORDER BY recommendation_score DESC
         `;
 
@@ -59,17 +59,16 @@ const searchController = async (req, res) => {
             SQRT( SUM( (r.r1.score - p1_mean)^2) * sum( (r.r2.score - p2_mean) ^2)) AS denom,
             p1, p2
             WHERE denom <> 0
-            WITH p1, p2, nom/denom AS pearson_similarty
-            WITH p1, p2, pearson_similarty
-            ORDER BY pearson_similarty DESC
+            WITH p1, p2, nom/denom AS pearson_similarity
+            WITH p1, p2, pearson_similarity
+            ORDER BY pearson_similarity DESC
             LIMIT 15
-            OPTIONAL MATCH (p2)-[r:INTERACTIVE]-(d:Doctor) WHERE NOT EXISTS( (p1)-[:INTERACTIVE]-(d) )
-            WITH d, SUM( pearson_similarty * r.score) AS similar_score
-            UNWIND $symptom_list as symptom_id
-            MATCH (symptom:Symptom)-[:IS_BOOKED_WITH]-(d) WHERE symptom._id = symptom_id
-            MATCH (doctor:Doctor)-[r:IS_BOOKED_WITH]-(symptom)
-            WITH sum(DISTINCT r.score) as symptom_score, similar_score, doctor
-            RETURN DISTINCT doctor._id as _id, (similar_score + symptom_score) as recommendation_score
+            MATCH (p2)-[r:INTERACTIVE]-(d:Doctor)
+            WHERE doctor.first_name CONTAINS $keyword
+            WITH d, SUM( pearson_similarity * r.score) AS similar_score
+            MATCH (symptom:Symptom)-[:IS_BOOKED_WITH]-(d)
+            WHERE symptom._id IN $symptom_list
+            RETURN DISTINCT d._id as _id, similar_score as recommendation_score
             ORDER BY recommendation_score DESC
         `;
 
@@ -77,7 +76,8 @@ const searchController = async (req, res) => {
             UNWIND $symptom_list as _id
             MATCH (symptom:Symptom) WHERE symptom._id = _id
             MATCH (doctor:Doctor)-[:IS_BOOKED_WITH]-(symptom)
-            OPTIONAL MATCH (doctor)-[r1:INTERACTIVE]-(:Patient)
+            MATCH (doctor)-[r1:INTERACTIVE]-(:Patient)
+            WHERE doctor.first_name CONTAINS $keyword
             WITH sum(DISTINCT r1.score) as recommendation_score, doctor    
             ORDER BY recommendation_score DESC
             RETURN doctor._id as _id, recommendation_score
@@ -87,7 +87,8 @@ const searchController = async (req, res) => {
 
         const result = await session.run(queryCypher, {
             symptom_list: symptom_list,
-            patient: patient_id
+            patient: patient_id,
+            keyword: keyword || ''
         });
 
         if (result && result.records && result.records.length) {
