@@ -51,14 +51,14 @@ const createAppointment = async (req, res) => {
         }
         //add send notification:
 
-        return res.json({
+        return res.status(200).json({
             success: true,
             data: appointmentCreated,
             statusCode: 200,
         });
     } catch (error) {
         console.log(error);
-        return res.json({
+        return res.status(500).json({
             success: false,
             errorMessage: 'Server error',
             statusCode: 500,
@@ -99,7 +99,7 @@ const updateAppointment = async (req, res) => {
             statusCode: 200,
         });
     } catch (error) {
-        return res.status(200).json({
+        return res.status(500).json({
             success: false,
             errorMessage: 'Server error',
             statusCode: 500,
@@ -151,7 +151,7 @@ const getListAppointment = async (req, res) => {
         appointments = [];
     }
 
-    return res.json({
+    return res.status(200).json({
         success: true,
         data: appointments,
         statusCode: 200,

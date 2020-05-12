@@ -14,5 +14,6 @@ router.post('/:doctor_id/favorite',passport.authenticate('jwt', {
 router.post('/:doctor_id/comments',passport.authenticate('jwt', {
     session: false
 }), commentController.createCommentToDoctor);
+router.post('/near-by', doctorController.getDoctorNearBy);
 
 module.exports = router;

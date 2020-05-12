@@ -43,7 +43,7 @@ const signup = async (req, res) => {
             statusCode: 200
         })
     } catch (error) {
-        return res.json({
+        return res.status(500).json({
             success: false,
             errorMessage: error,
             statusCode: 500,
@@ -80,10 +80,10 @@ const login = async (req, res) => {
             is_exp: false,
         });
         let userItem = null;
-        if (user.role === 'DOCTOR'){
-            userItem = await Doctor.findOne({user_id :user_id }).lean();
+        if (user.role === 'DOCTOR') {
+            userItem = await Doctor.findOne({user_id: user_id}).lean();
         }
-        userItem = await Patient.findOne({user_id :user_id }).lean();
+        userItem = await Patient.findOne({user_id: user_id}).lean();
         const id_login = userItem._id;
         return res.json({
             success: true,
@@ -94,7 +94,7 @@ const login = async (req, res) => {
             statusCode: 200
         });
     } catch (error) {
-        return res.json({
+        return res.status(401).json({
             success: false,
             errorMessage: "Authentication failed.",
             statusCode: 401,
@@ -130,7 +130,7 @@ const resetPassword = async (req, res) => {
             phone_number
         });
     } catch (error) {
-        return res.json({
+        return res.status(500).json({
             success: false,
             errorMessage: 'Server error',
             statusCode: 500,

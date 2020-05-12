@@ -87,13 +87,13 @@ const getAllExaminationOfDoctor = async (req, res) => {
         const doctorItem = await Doctor.findById(doctor_id).populate('examination_list').lean();
         const exam_list = doctorItem.examination_list;
         //console.log(list_examination);
-        return res.json({
+        return res.status(200).json({
             success: true,
             data: exam_list,
             statusCode: 200
         });
     } catch (error) {
-        return res.json({
+        return res.status(200).json({
             success: true,
             data: [],
             statusCode: 200
