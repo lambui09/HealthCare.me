@@ -51,9 +51,11 @@ const searchDoctor = async (req, res) => {
                 }
             }
         });
-        return res.json({
+        return res.status(200).json({
             success: true,
-            data: list_doctor,
+            data: {
+                data: list_doctor,
+            },
             statusCode: 200
         });
     } catch (error) {
@@ -77,7 +79,7 @@ const getDoctor = async (req, res) => {
         return res.json({
             success: true,
             data: {
-                data : list_doctor,
+                data: list_doctor,
                 total_size: list_doctor.length
             },
             statusCode: 200
@@ -208,7 +210,7 @@ const getAllDoctor = async (req, res) => {
     return res.status(200).json({
         success: true,
         data: {
-            doctors,
+            data: doctors,
         },
         meta: {
             page,
@@ -262,13 +264,16 @@ const getDoctorNearBy = async (req, res) => {
         }).populate('specialist').lean();
         return res.status(200).json({
             success: true,
-            data: doctorList
+            data: {
+                data: doctorList,
+                total_size: doctorList.length
+            }
         })
     } catch (error) {
         console.log(error);
         return res.status(200).json({
             success: true,
-            data: []
+            data: {}
         })
     }
 };
