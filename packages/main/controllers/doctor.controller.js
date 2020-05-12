@@ -9,19 +9,20 @@ const updateDoctor = async (req, res) => {
     console.log(doctor_id);
     let {body: data} = req;
     if (data.first_name || data.last_name) {
-        const full_name = `${data.first_name} ${data.last_name}`;
+        const full_name = `${data.last_name} ${data.first_name}`;
         data.full_name = full_name;
     }
     try {
         const doctorUpdated = await Doctor.findByIdAndUpdate(doctor_id, data, {new: true});
         console.log(doctorUpdated);
-        return res.json({
+        return res.status(200).json({
             success: true,
             data: doctorUpdated,
             statusCode: 200,
         });
     } catch (error) {
-        return res.json({
+        console.log(error);
+        return res.status(500).json({
             success: false,
             errorMessage: 'Server error',
             statusCode: 500,
@@ -35,6 +36,7 @@ const searchDoctor = async (req, res) => {
         latitude,
         longitude
     } = req.query;
+    console.log(req.query);
 
     try {
         const list_doctor = await Doctor.find({
@@ -56,7 +58,7 @@ const searchDoctor = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        return res.json({
+        return res.status(200).json({
             success: true,
             data: [],
             statusCode: 200
@@ -71,14 +73,17 @@ const getDoctor = async (req, res) => {
         filter._id = doctor_id;
     }
     try {
-        const list_doctor = await Doctor.find(filter);
+        const list_doctor = await Doctor.find(filter).populate('specialist').lean();
         return res.json({
             success: true,
-            data: list_doctor,
+            data: {
+                data : list_doctor,
+                total_size: list_doctor.length
+            },
             statusCode: 200
         });
     } catch (error) {
-        return res.json({
+        return res.status(200).json({
             success: true,
             data: [],
             statusCode: 200
@@ -260,6 +265,7 @@ const getDoctorNearBy = async (req, res) => {
             data: doctorList
         })
     } catch (error) {
+        console.log(error);
         return res.status(200).json({
             success: true,
             data: []

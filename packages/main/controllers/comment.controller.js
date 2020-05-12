@@ -48,6 +48,7 @@ const createCommentToDoctor = async (req, res) => {
         return res.status(404).json({
             success: false,
             errors,
+            status: 401,
         });
     }
     const commenter = req.user.id;
@@ -70,6 +71,7 @@ const createCommentToDoctor = async (req, res) => {
         return res.status(400).json({
             success: false,
             errors,
+            status: 401
         });
     }
     let {
@@ -94,6 +96,7 @@ const createCommentToDoctor = async (req, res) => {
         return res.status(400).json({
             success: false,
             errors,
+            status: 400,
         });
     }
     let comment = null;

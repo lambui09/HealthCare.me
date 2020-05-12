@@ -83,7 +83,6 @@ const doctorSchema = new Schema({
 }, {
     timestamp: true
 });
-
 doctorSchema.index({
     location: "2dsphere"
 });
