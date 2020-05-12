@@ -86,11 +86,16 @@ const deleteSpecialist = async (req, res) => {
 
 const getAllDoctorOfSpecialist = async (req, res) => {
     const {specialist_id} = req.params;
+    console.log(specialist_id);
     try {
-        const doctorList = Doctor.find({specialist: specialist_id}).lean();
+        const doctorList = await Doctor.find({specialist: specialist_id}).lean();
+        console.log(doctorList);
         return res.status(200).json({
             success: true,
-            data: doctorList,
+            data: {
+                data: doctorList,
+                total_size: doctorList.length
+            },
         })
     } catch (error) {
         return res.status(200).json({
@@ -101,13 +106,16 @@ const getAllDoctorOfSpecialist = async (req, res) => {
 };
 
 const getAllSpecialist = async (req, res) => {
-    try{
+    try {
         const listSpecialist = await Specialist.find().lean();
         return res.status(200).json({
             success: true,
-            data: listSpecialist
+            data: {
+                data: listSpecialist,
+                total_size: listSpecialist.length
+            }
         })
-    }catch (error) {
+    } catch (error) {
         return res.status(200).json({
             success: true,
             data: [],
