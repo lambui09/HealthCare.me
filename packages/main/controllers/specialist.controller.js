@@ -88,7 +88,7 @@ const getAllDoctorOfSpecialist = async (req, res) => {
     const {specialist_id} = req.params;
     console.log(specialist_id);
     try {
-        const doctorList = await Doctor.find({specialist: specialist_id}).lean();
+        const doctorList = await Doctor.find({specialist: specialist_id}).populate('specialist').lean();
         console.log(doctorList);
         return res.status(200).json({
             success: true,
@@ -100,7 +100,7 @@ const getAllDoctorOfSpecialist = async (req, res) => {
     } catch (error) {
         return res.status(200).json({
             success: true,
-            data: []
+            data: {}
         });
     }
 };
@@ -118,7 +118,7 @@ const getAllSpecialist = async (req, res) => {
     } catch (error) {
         return res.status(200).json({
             success: true,
-            data: [],
+            data: {},
         })
     }
 };

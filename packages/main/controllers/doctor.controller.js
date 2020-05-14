@@ -51,16 +51,21 @@ const searchDoctor = async (req, res) => {
                 }
             }
         });
-        return res.json({
+        return res.status(200).json({
             success: true,
-            data: list_doctor,
+            data: {
+                data: {
+                    data: list_doctor,
+                    total_size: list_doctor.length,
+                },
+            },
             statusCode: 200
         });
     } catch (error) {
         console.log(error);
         return res.status(200).json({
             success: true,
-            data: [],
+            data: {},
             statusCode: 200
         });
     }
@@ -77,7 +82,7 @@ const getDoctor = async (req, res) => {
         return res.json({
             success: true,
             data: {
-                data : list_doctor,
+                data: list_doctor,
                 total_size: list_doctor.length
             },
             statusCode: 200
@@ -208,7 +213,7 @@ const getAllDoctor = async (req, res) => {
     return res.status(200).json({
         success: true,
         data: {
-            doctors,
+            data: doctors,
         },
         meta: {
             page,
@@ -224,7 +229,7 @@ const getDetailDoctor = async (req, res) => {
     const {doctor_id} = req.params;
     let doctor = null;
     try {
-        doctor = await Doctor.findById(doctor_id);
+        doctor = await Doctor.findById(doctor_id).populate('specialist').lean();
     } catch (error) {
         console.log(error);
         doctor = null;
@@ -254,7 +259,7 @@ const getDoctorNearBy = async (req, res) => {
                 $near: {
                     $geometry: {
                         type: 'Point',
-                        coordinates: [lat, lng],
+                        coordinates: [lng,lat],
                     },
                     $maxDistance: distance,
                 },
@@ -262,13 +267,16 @@ const getDoctorNearBy = async (req, res) => {
         }).populate('specialist').lean();
         return res.status(200).json({
             success: true,
-            data: doctorList
+            data: {
+                data: doctorList,
+                total_size: doctorList.length
+            }
         })
     } catch (error) {
         console.log(error);
         return res.status(200).json({
             success: true,
-            data: []
+            data: {}
         })
     }
 };

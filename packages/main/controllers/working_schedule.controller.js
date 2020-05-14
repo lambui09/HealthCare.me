@@ -28,13 +28,13 @@ const createWorkingSchedule = async (req, res) => {
 
     try {
         await newWorkingSchedule.save();
-        return res.json({
+        return res.status(200).json({
             success: true,
             data: newWorkingSchedule,
             statusCode: 200,
         })
     } catch (error) {
-        return res.json({
+        return res.status(500).json({
             success: false,
             errorMessage: 'Server err',
             statusCode: 500,
@@ -61,7 +61,7 @@ const getAvailableTime = async (req, res) => {
             }
         });
         if (!working_schedule) {
-            return res.json({
+            return res.status(200).json({
                 success: true,
                 data: [],
                 statusCode: 200,
@@ -85,13 +85,13 @@ const getAvailableTime = async (req, res) => {
             }
         });
 
-        return res.json({
+        return res.status(200).json({
             success: true,
             data: list_time_available,
             statusCode: 200,
         });
     } catch (error) {
-        return res.json({
+        return res.status(500).json({
             success: false,
             errorMessage: 'Server error',
             statusCode: 500,
