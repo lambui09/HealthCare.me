@@ -18,7 +18,7 @@ const appointmentSchema = new Schema({
     },
     duration: {
         type: Number,
-        default: 30
+        default: 15
     },
     status: {
         type: String,
@@ -27,7 +27,7 @@ const appointmentSchema = new Schema({
     },
     time_remainder_send_notification: {
         type: Number,
-        default: 30
+        default: 0
     },
     symptom_list: [{
         type: mongoose.Schema.Types.ObjectId,
