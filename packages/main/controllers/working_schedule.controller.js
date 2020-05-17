@@ -87,7 +87,10 @@ const getAvailableTime = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            data: list_time_available,
+            data: {
+                data: list_time_available,
+                total_size : list_time_available.length,
+            },
             statusCode: 200,
         });
     } catch (error) {

@@ -89,13 +89,16 @@ const getAllExaminationOfDoctor = async (req, res) => {
         //console.log(list_examination);
         return res.status(200).json({
             success: true,
-            data: exam_list,
+            data: {
+                data: exam_list,
+                total_size: exam_list.length,
+            },
             statusCode: 200
         });
     } catch (error) {
         return res.status(200).json({
             success: true,
-            data: [],
+            data: {},
             statusCode: 200
         });
     }
@@ -106,12 +109,15 @@ const getAllExamination = async (req, res) => {
         const listExamination = await Examination.find().lean();
         return res.status(200).json({
             success: true,
-            data: listExamination,
+            data: {
+                data: listExamination,
+                total_size: listExamination.length,
+            },
         })
     } catch (error) {
         return res.status(200).json({
             success: true,
-            data: [],
+            data: {},
         })
     }
 };

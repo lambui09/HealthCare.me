@@ -80,16 +80,19 @@ const deleteSymptom = async (req, res) => {
 };
 
 const getAllSymptom = async (req, res) => {
-    try{
+    try {
         const listSymptom = await Symptom.find().lean();
         return res.status(200).json({
             success: true,
-            data: listSymptom,
+            data: {
+                data: listSymptom,
+                total_size: listSymptom.length
+            },
         })
-    }catch (error) {
+    } catch (error) {
         return res.status(200).json({
             success: true,
-            data: [],
+            data: {},
         })
     }
 };
