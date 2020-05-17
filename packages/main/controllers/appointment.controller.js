@@ -11,6 +11,7 @@ const createAppointment = async (req, res) => {
         time,
         time_remainder_send_notification,
         doctor_id,
+        symptom_list,
     } = req.body;
 
     const {
@@ -24,6 +25,9 @@ const createAppointment = async (req, res) => {
         }
         if (time_remainder_send_notification) {
             newAppointment.time_remainder_send_notification = time_remainder_send_notification;
+        }
+        if (symptom_list){
+            newAppointment.symptom_list = symptom_list
         }
         newAppointment.price = price;
         newAppointment.date = moment(date);
