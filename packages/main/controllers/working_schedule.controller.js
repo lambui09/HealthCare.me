@@ -60,10 +60,11 @@ const getAvailableTime = async (req, res) => {
                 '$gte': moment(date),
             }
         });
+        console.log(working_schedule);
         if (!working_schedule) {
             return res.status(200).json({
                 success: true,
-                data: [],
+                data: {},
                 statusCode: 200,
             });
         }

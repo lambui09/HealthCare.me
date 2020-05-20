@@ -119,6 +119,7 @@ const getListAppointment = async (req, res) => {
         status,
         status_not,
     } = req.query;
+    console.log(req.query);
 
     let filter = {};
     if (doctor_id) {
@@ -157,7 +158,10 @@ const getListAppointment = async (req, res) => {
 
     return res.status(200).json({
         success: true,
-        data: appointments,
+        data: {
+            data: appointments,
+            total_size: appointments.length
+        },
         statusCode: 200,
     })
 };
