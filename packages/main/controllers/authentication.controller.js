@@ -13,11 +13,21 @@ const signup = async (req, res) => {
     } = req.body;
     try {
         const passwordHashed = bcrypt.hashSync(password, 13);
-        const newUser = new User();
-        newUser.phone_number = phone_number;
-        newUser.password = passwordHashed;
-        newUser.role = role;
-        newUser.device_token = device_token;
+
+        const dataFetched = await User.findOne({
+            phone_number
+        });
+
+        if (dataFetched) {
+            throw new Error('Phone number is already existed!');
+        }
+
+        const newUser = new User({
+            phone_number,
+            password: passwordHashed,
+            role,
+            device_token
+        });
         await newUser.save();
         const Model = role === 'DOCTOR' ? Doctor : Patient;
         const newModel = new Model();
@@ -43,9 +53,12 @@ const signup = async (req, res) => {
             statusCode: 200
         })
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             success: false,
-            errorMessage: error,
+            errorMessage: {
+                error: error.message
+            },
             statusCode: 500,
         });
     }
@@ -99,7 +112,6 @@ const login = async (req, res) => {
             statusCode: 200
         });
     } catch (error) {
-        console.log(error);
         return res.status(401).json({
             success: false,
             errorMessage: "Authentication failed.",
