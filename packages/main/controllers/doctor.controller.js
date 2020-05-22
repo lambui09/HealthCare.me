@@ -50,14 +50,12 @@ const searchDoctor = async (req, res) => {
                     }
                 }
             }
-        });
+        }).populate('specialist').lean();
         return res.status(200).json({
             success: true,
             data: {
-                data: {
-                    data: list_doctor,
-                    total_size: list_doctor.length,
-                },
+                data: list_doctor,
+                total_size: list_doctor.length,
             },
             statusCode: 200
         });
@@ -155,9 +153,7 @@ const addFavorite = async (req, res) => {
         }
         return res.status(200).json({
             success: true,
-            data: {
-                doctorFavoriteCreated,
-            },
+            data: doctorFavoriteCreated,
         });
     }
 
@@ -167,7 +163,8 @@ const addFavorite = async (req, res) => {
         doctorFavoriteDeleted = await Favorite.findOneAndDelete({
             doctor: doctor_id,
             favorite_personal: user.id,
-        })
+        });
+        doctorFavoriteDeleted.is_favorite = false
     } catch (error) {
         console.log(error);
         doctorFavoriteDeleted = null;
@@ -182,9 +179,7 @@ const addFavorite = async (req, res) => {
     }
     return res.status(200).json({
         success: true,
-        data: {
-            doctorFavoriteDeleted,
-        },
+        data: doctorFavoriteDeleted,
     });
 };
 
@@ -259,7 +254,7 @@ const getDoctorNearBy = async (req, res) => {
                 $near: {
                     $geometry: {
                         type: 'Point',
-                        coordinates: [lng,lat],
+                        coordinates: [lng, lat],
                     },
                     $maxDistance: distance,
                 },

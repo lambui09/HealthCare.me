@@ -3,6 +3,7 @@ const Appointment = require('../models/Appointment');
 const sendNotification = require('../helpers/sendNotification');
 const Doctor = require('../models/Doctor');
 const Patient = require('../models/Patient');
+const Specialist = require('../models/Specialist');
 const createAppointment = async (req, res) => {
     const {
         duration,
@@ -26,7 +27,7 @@ const createAppointment = async (req, res) => {
         if (time_remainder_send_notification) {
             newAppointment.time_remainder_send_notification = time_remainder_send_notification;
         }
-        if (symptom_list){
+        if (symptom_list) {
             newAppointment.symptom_list = symptom_list
         }
         newAppointment.price = price;
@@ -35,13 +36,13 @@ const createAppointment = async (req, res) => {
         newAppointment.doctor_id = doctor_id;
         newAppointment.patient_id = user._id;
         const appointmentCreated = await newAppointment.save();
-        try{
+        try {
             const doctor = await Doctor.findById(doctor_id).lean();
             const patient = await Patient.findById(user._id).lean();
             const title = `Bạn có lịch hẹn mới từ bệnh nhân ${patient.full_name}`;
             const body = `Vào lúc ${newAppointment.time} ngày ${newAppointment.date}`;
             let device_token = doctor.device_token;
-            if (device_token){
+            if (device_token) {
                 await sendNotification(device_token, {
                     title,
                     body,
@@ -49,7 +50,7 @@ const createAppointment = async (req, res) => {
                     receiver: doctor._id.toString(),
                 }, true);
             }
-        }catch (error) {
+        } catch (error) {
             console.log(error);
             throw new Error(error.message);
         }
@@ -89,7 +90,7 @@ const updateAppointment = async (req, res) => {
         const title = `Lịch khám của bạn với bác sĩ ${appointmentUpdated.doctor_id.full_name} đã được xác nhận.`;
         const body = `Vào lúc ${appointmentUpdated.updatedAt}`;
         let device_token = appointmentUpdated.patient_id.device_token;
-        if (device_token){
+        if (device_token) {
             sendNotification(device_token, {
                 title,
                 body,
@@ -119,6 +120,7 @@ const getListAppointment = async (req, res) => {
         status,
         status_not,
     } = req.query;
+    console.log(req.query);
 
     let filter = {};
     if (doctor_id) {
@@ -149,15 +151,23 @@ const getListAppointment = async (req, res) => {
     try {
         appointments = await Appointment
             .find(filter)
-            .populate('doctor_id')
-            .populate('patient_id');
+            .populate('patient_id')
+            .populate(
+                {
+                    path: 'doctor_id',
+                    populate: {path: 'specialist'}
+                }
+            )
     } catch (error) {
         appointments = [];
     }
 
     return res.status(200).json({
         success: true,
-        data: appointments,
+        data: {
+            data: appointments,
+            total_size: appointments.length
+        },
         statusCode: 200,
     })
 };

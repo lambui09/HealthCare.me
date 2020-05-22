@@ -61,12 +61,15 @@ const login = async (req, res) => {
             phone_number
         });
         if (!user) {
+            console.log("vao day khac user");
             throw new Error('Unauthenticated!');
         }
         const user_id = user._id;
+        console.log(user_id);
         const passwordSaved = user.password;
         const isMatch = bcrypt.compareSync(password, passwordSaved);
         if (!isMatch) {
+            console.log("vao day account k khop");
             throw new Error('Unauthenticated!');
         }
         const token = jwt.sign({
@@ -82,10 +85,13 @@ const login = async (req, res) => {
         let userItem = null;
         if (user.role === 'DOCTOR') {
             userItem = await Doctor.findOne({user_id: user_id}).lean();
+            console.log(userItem)
+        }else {
+            userItem = await Patient.findOne({user_id: user_id}).lean();
         }
-        userItem = await Patient.findOne({user_id: user_id}).lean();
         const id_login = userItem._id;
-        return res.json({
+        console.log(id_login);
+        return res.status(200).json({
             success: true,
             data: {
                 token: token,
@@ -94,6 +100,7 @@ const login = async (req, res) => {
             statusCode: 200
         });
     } catch (error) {
+        console.log(error);
         return res.status(401).json({
             success: false,
             errorMessage: "Authentication failed.",
@@ -107,13 +114,13 @@ const logout = async (req, res) => {
         await User.findByIdAndUpdate(req.user.user_id, {
             is_exp: true
         });
-        return res.json({
+        return res.status(200).json({
             success: true,
             data: 'Logout successfully',
             statusCode: 200,
         })
     } catch (error) {
-        return res.json({
+        return res.status(500).json({
             success: false,
             errorMessage: 'Server error',
             statusCode: 500,
