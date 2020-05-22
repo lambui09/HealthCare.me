@@ -5,5 +5,10 @@ const messageSchema = new Schema({
         type : String,
         default : ""
     }
-},{timestamp: true});
+},{
+    timestamps: {
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt'
+    }
+});
 module.exports = mongoose.model('Message', messageSchema);

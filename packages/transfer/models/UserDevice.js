@@ -21,5 +21,10 @@ const userDeviceSchema = new Schema({
         type : Date,
         default: Date.now()
     }
-}, {timestamp: true});
+}, {
+    timestamps: {
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt'
+    }
+});
 module.exports = mongoose.model('UserDevice', userDeviceSchema);

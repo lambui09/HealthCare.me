@@ -68,7 +68,7 @@ const login = async (req, res) => {
         const passwordSaved = user.password;
         const isMatch = bcrypt.compareSync(password, passwordSaved);
         if (!isMatch) {
-            console.log("vao day account k khop");
+            console.log("Password is not match");
             throw new Error('Unauthenticated!');
         }
         const token = jwt.sign({

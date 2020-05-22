@@ -80,7 +80,10 @@ const doctorSchema = new Schema({
         ref: 'Specialist'
     }],
 }, {
-    timestamp: true
+    timestamps: {
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt'
+    }
 });
 
 doctorSchema.index({

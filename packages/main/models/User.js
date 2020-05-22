@@ -26,7 +26,9 @@ const userSchema = new Schema({
         type: String,
         default: false,
     }
-}, {timestamp: false});
+}, {
+    timestamp: false
+});
 
 module.exports = mongose.model('User', userSchema);
 

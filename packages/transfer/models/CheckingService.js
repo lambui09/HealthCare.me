@@ -17,5 +17,10 @@ const checkingServiceSchema = new Schema({
         type : Number,
         default : 0,
     }
-}, {timestamp: true});
+}, {
+    timestamps: {
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt'
+    }
+});
 module.exports = mongoose.model('CheckingService', checkingServiceSchema);

@@ -14,5 +14,10 @@ const specialistSchema = new Schema({
         ref: 'Doctor',
         required: true,
     },
-}, {timestamp: true});
+}, {
+    timestamps: {
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt'
+    }
+});
 module.exports = mongoose.model('Specialist', specialistSchema);
