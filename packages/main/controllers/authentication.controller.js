@@ -74,14 +74,12 @@ const login = async (req, res) => {
             phone_number
         });
         if (!user) {
-            console.log("vao day khac user");
             throw new Error('Unauthenticated!');
         }
         const user_id = user._id;
         const passwordSaved = user.password;
         const isMatch = bcrypt.compareSync(password, passwordSaved);
         if (!isMatch) {
-            console.log("Password is not match");
             throw new Error('Unauthenticated!');
         }
         const token = jwt.sign({
@@ -97,12 +95,10 @@ const login = async (req, res) => {
         let userItem = null;
         if (user.role === 'DOCTOR') {
             userItem = await Doctor.findOne({user_id: user_id}).lean();
-            console.log(userItem)
         }else {
             userItem = await Patient.findOne({user_id: user_id}).lean();
         }
         const id_login = userItem._id;
-        console.log(id_login);
         return res.status(200).json({
             success: true,
             data: {
@@ -144,10 +140,8 @@ const resetPassword = async (req, res) => {
         phone_number,
         password,
     } = req.body;
-
-    const passwordHashed = bcrypt.hashSync(password, 13);
-
     try {
+        const passwordHashed = bcrypt.hashSync(password, 13);
         await User.findOneAndUpdate(
             { phone_number },
             { password: passwordHashed }
