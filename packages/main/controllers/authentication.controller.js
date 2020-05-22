@@ -65,7 +65,6 @@ const login = async (req, res) => {
             throw new Error('Unauthenticated!');
         }
         const user_id = user._id;
-        console.log(user_id);
         const passwordSaved = user.password;
         const isMatch = bcrypt.compareSync(password, passwordSaved);
         if (!isMatch) {
@@ -131,11 +130,16 @@ const logout = async (req, res) => {
 const resetPassword = async (req, res) => {
     const {
         phone_number,
+        password,
     } = req.body;
+
+    const passwordHashed = bcrypt.hashSync(password, 13);
+
     try {
-        const user = await User.findOne({
-            phone_number
-        });
+        await User.findOneAndUpdate(
+            { phone_number },
+            { password: passwordHashed }
+        );
     } catch (error) {
         return res.status(500).json({
             success: false,
@@ -143,10 +147,12 @@ const resetPassword = async (req, res) => {
             statusCode: 500,
         });
     }
-    const resetToken = jwt.sign({
-        phone_number
-    }, process.env.JWT_SECRET_KEY);
-    return resetToken;
+
+    return res.status(200).json({
+        success: true,
+        data: 'Reset password successfully',
+        statusCode: 200,
+    })
 };
 module.exports = {
     signup,
