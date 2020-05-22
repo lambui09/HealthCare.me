@@ -37,7 +37,10 @@ const workingScheduleSchema = new Schema({
         required: true,
     }
 }, {
-    timestamp: true
+    timestamps: {
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt'
+    }
 });
 module.exports = mongoose.model('WorkingSchedule', workingScheduleSchema);
 //luu thong tin gio lam cac ngay trong tuan bac si.

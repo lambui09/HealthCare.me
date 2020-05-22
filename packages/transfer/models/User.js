@@ -26,7 +26,12 @@ const userSchema = new Schema({
         type: String,
         default: false,
     }
-}, {timestamp: false});
+}, {
+    timestamps: {
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt'
+    }
+});
 
 module.exports = mongose.model('User', userSchema);
 

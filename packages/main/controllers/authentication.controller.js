@@ -13,11 +13,21 @@ const signup = async (req, res) => {
     } = req.body;
     try {
         const passwordHashed = bcrypt.hashSync(password, 13);
-        const newUser = new User();
-        newUser.phone_number = phone_number;
-        newUser.password = passwordHashed;
-        newUser.role = role;
-        newUser.device_token = device_token;
+
+        const dataFetched = await User.findOne({
+            phone_number
+        });
+
+        if (dataFetched) {
+            throw new Error('Phone number is already existed!');
+        }
+
+        const newUser = new User({
+            phone_number,
+            password: passwordHashed,
+            role,
+            device_token
+        });
         await newUser.save();
         const Model = role === 'DOCTOR' ? Doctor : Patient;
         const newModel = new Model();
@@ -43,9 +53,12 @@ const signup = async (req, res) => {
             statusCode: 200
         })
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             success: false,
-            errorMessage: error,
+            errorMessage: {
+                error: error.message
+            },
             statusCode: 500,
         });
     }
@@ -61,15 +74,12 @@ const login = async (req, res) => {
             phone_number
         });
         if (!user) {
-            console.log("vao day khac user");
             throw new Error('Unauthenticated!');
         }
         const user_id = user._id;
-        console.log(user_id);
         const passwordSaved = user.password;
         const isMatch = bcrypt.compareSync(password, passwordSaved);
         if (!isMatch) {
-            console.log("vao day account k khop");
             throw new Error('Unauthenticated!');
         }
         const token = jwt.sign({
@@ -85,12 +95,10 @@ const login = async (req, res) => {
         let userItem = null;
         if (user.role === 'DOCTOR') {
             userItem = await Doctor.findOne({user_id: user_id}).lean();
-            console.log(userItem)
         }else {
             userItem = await Patient.findOne({user_id: user_id}).lean();
         }
         const id_login = userItem._id;
-        console.log(id_login);
         return res.status(200).json({
             success: true,
             data: {
@@ -100,7 +108,6 @@ const login = async (req, res) => {
             statusCode: 200
         });
     } catch (error) {
-        console.log(error);
         return res.status(401).json({
             success: false,
             errorMessage: "Authentication failed.",
@@ -131,11 +138,14 @@ const logout = async (req, res) => {
 const resetPassword = async (req, res) => {
     const {
         phone_number,
+        password,
     } = req.body;
     try {
-        const user = await User.findOne({
-            phone_number
-        });
+        const passwordHashed = bcrypt.hashSync(password, 13);
+        await User.findOneAndUpdate(
+            { phone_number },
+            { password: passwordHashed }
+        );
     } catch (error) {
         return res.status(500).json({
             success: false,
@@ -143,10 +153,12 @@ const resetPassword = async (req, res) => {
             statusCode: 500,
         });
     }
-    const resetToken = jwt.sign({
-        phone_number
-    }, process.env.JWT_SECRET_KEY);
-    return resetToken;
+
+    return res.status(200).json({
+        success: true,
+        data: 'Reset password successfully',
+        statusCode: 200,
+    })
 };
 module.exports = {
     signup,

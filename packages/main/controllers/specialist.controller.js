@@ -86,10 +86,13 @@ const deleteSpecialist = async (req, res) => {
 
 const getAllDoctorOfSpecialist = async (req, res) => {
     const {specialist_id} = req.params;
-    console.log(specialist_id);
     try {
-        const doctorList = await Doctor.find({specialist: specialist_id}).populate('specialist').lean();
-        console.log(doctorList);
+        const doctorList = await Doctor.find({
+            specialist: specialist_id
+        }).sort({
+            rate_star: -1,
+            total_book: -1
+        }).populate('specialist').lean();
         return res.status(200).json({
             success: true,
             data: {

@@ -3,11 +3,11 @@ const {Schema} = mongoose;
 const notificationSchema = new Schema({
     title: {
         type: String,
-        default: ""
+        required: true,
     },
     body: {
         type: String,
-        default: "",
+        required: true,
     },
     has_read: {
         type : Boolean,
@@ -30,5 +30,10 @@ const notificationSchema = new Schema({
     time_remainder_send_notification:{
         type: Date,
     }
-}, {timestamp: true});
+}, {
+    timestamps: {
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt'
+    }
+});
 module.exports = mongoose.model('Notification', notificationSchema);

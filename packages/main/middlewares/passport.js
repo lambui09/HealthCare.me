@@ -21,7 +21,7 @@ passport.use('jwt', new JwtStrategy(opts, async (jwt_payload, done) => {
         const Model = user.role === 'DOCTOR' ? Doctor : Patient;
         const userRole = await Model.findOne({
             user_id: user._id
-        });
+        }).populate('user_id');
         if (!userRole) {
             throw new Error('User not found!');
         }

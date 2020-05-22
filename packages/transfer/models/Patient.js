@@ -58,7 +58,12 @@ const patientSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-}, {timestamp: true});
+}, {
+    timestamps: {
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt'
+    }
+});
 
 patientSchema.index({
     location: "2dsphere"
