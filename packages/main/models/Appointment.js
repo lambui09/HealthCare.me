@@ -3,6 +3,8 @@ const {
     Schema
 } = mongoose;
 
+const Doctor = require('./Doctor');
+
 const appointmentSchema = new Schema({
     price: {
         type: Number,
@@ -48,6 +50,17 @@ const appointmentSchema = new Schema({
     timestamps: {
         createdAt: 'createdAt',
         updatedAt: 'updatedAt'
+    }
+});
+
+appointmentSchema.post(/update/i, async function (doc) {
+    if (doc.status === 'COMPLETED') {
+        const doctor_id = doc.doctor_id._id;
+        const doctor = await Doctor.findById(doctor_id);
+        const total_book = doctor.total_book + 1;
+        await Doctor.findByIdAndUpdate(doctor_id, {
+            total_book,
+        });
     }
 });
 

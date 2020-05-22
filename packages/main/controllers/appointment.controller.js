@@ -104,6 +104,7 @@ const updateAppointment = async (req, res) => {
             statusCode: 200,
         });
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             success: false,
             errorMessage: 'Server error',

@@ -79,6 +79,22 @@ const doctorSchema = new Schema({
     specialist: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Specialist'
+    },
+    rate_star: {
+        type: Number,
+        default: 0
+    },
+    total_rate: {
+        type: Number,
+        default: 0
+    },
+    total_book: {
+        type: Number,
+        default: 0,
+    },
+    total_favorite: {
+        type: Number,
+        default: 0,
     }
 }, {
     timestamps: {
