@@ -17,15 +17,18 @@ const getComments = async (req, res) => {
             .populate('commenter')
             .populate('doctor');
 
-        return res.json({
+        return res.status(200).json({
             success: true,
-            data: comments,
+            data: {
+                data: comments,
+                total_size: comments.length,
+            },
             statusCode: 200,
         });
     } catch (error) {
-        return res.json({
+        return res.status(200).json({
             success: true,
-            data: [],
+            data: {},
             statusCode: 200,
         });
     }
