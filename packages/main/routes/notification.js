@@ -5,4 +5,8 @@ const router = express.Router();
 router.get('/',passport.authenticate('jwt', {
     session: false
 }),NotificationController.getAllNotificationsByUser);
+
+router.get('/unseen', passport.authenticate('jwt', {
+    session: false
+}), NotificationController.countNotificationUnseen);
 module.exports = router;

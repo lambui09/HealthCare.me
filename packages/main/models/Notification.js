@@ -3,11 +3,11 @@ const {Schema} = mongoose;
 const notificationSchema = new Schema({
     title: {
         type: String,
-        default: ""
+        required: true,
     },
     body: {
         type: String,
-        default: "",
+        required: true,
     },
     has_read: {
         type : Boolean,

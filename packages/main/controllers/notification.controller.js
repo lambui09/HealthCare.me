@@ -7,7 +7,6 @@ const getAllNotificationsByUser = async (req, res) => {
         [role]: user_id,
         isSent: role !== 'patient'
     };
-    console.log(filter);
     try {
         const notiList = await Notification.find(filter).populate('patient').populate('doctor').lean();
         return res.status(200).json({
@@ -18,7 +17,6 @@ const getAllNotificationsByUser = async (req, res) => {
             }
         })
     } catch (error) {
-        console.log(error);
         return res.status(200).json({
             status: true,
             data: {},
@@ -26,6 +24,33 @@ const getAllNotificationsByUser = async (req, res) => {
     }
 };
 
+const countNotificationUnseen = async (req, res) => {
+    const user_id = req.user._id;
+    const role = req.user.user_id.role.toLowerCase();
+    const filter = {
+        [role]: user_id,
+        isSent: role !== 'patient',
+        has_read: false
+    };
+    try {
+        const countNotification = await Notification.countDocuments(filter);
+        return res.status(200).json({
+            status: true,
+            data: {
+                count: countNotification || 0
+            },
+        });
+    } catch (error) {
+        return res.status(200).json({
+            status: true,
+            data: {
+                count: 0
+            },
+        });
+    }
+}
+
 module.exports = {
     getAllNotificationsByUser,
+    countNotificationUnseen,
 };
