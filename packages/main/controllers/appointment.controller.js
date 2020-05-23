@@ -3,7 +3,7 @@ const Appointment = require('../models/Appointment');
 const sendNotification = require('../helpers/sendNotification');
 const Doctor = require('../models/Doctor');
 const Patient = require('../models/Patient');
-const Specialist = require('../models/Specialist');
+
 const createAppointment = async (req, res) => {
     const {
         duration,
@@ -40,7 +40,7 @@ const createAppointment = async (req, res) => {
             const doctor = await Doctor.findById(doctor_id).lean();
             const patient = await Patient.findById(user._id).lean();
             const title = `Bạn có lịch hẹn mới từ bệnh nhân ${patient.full_name}`;
-            const body = `Vào lúc ${newAppointment.time} ngày ${newAppointment.date}`;
+            const body = `Vào lúc ${newAppointment.time} ngày ${moment(newAppointment.date).format('DD/MM/YY HH:mm')}`;
             let device_token = doctor.device_token;
             if (device_token) {
                 await sendNotification(device_token, {
@@ -79,16 +79,19 @@ const updateAppointment = async (req, res) => {
     if (data.date) {
         data.date = moment(data.date)
     }
-    const {
-        user
-    } = req;
 
     try {
         const appointmentUpdated = await Appointment.findByIdAndUpdate(appointment_id, data).populate('doctor_id')
             .populate('patient_id').lean();
+
+        const msgObj = {
+            'COMPLETED': 'đã hoàn thành',
+            'CONFIRMED': 'đã được xác nhận',
+            'CANCELED': 'đã bị hủy'
+        }
         //add send notification
-        const title = `Lịch khám của bạn với bác sĩ ${appointmentUpdated.doctor_id.full_name} đã được xác nhận.`;
-        const body = `Vào lúc ${appointmentUpdated.updatedAt}`;
+        const title = `Lịch khám của bạn với bác sĩ ${appointmentUpdated.doctor_id.full_name} ${msgObj[data.status]}.`;
+        const body = `Vào lúc ${moment(appointmentUpdated.updatedAt).format('DD/MM/YYYY HH:mm')}`;
         let device_token = appointmentUpdated.patient_id.device_token;
         if (device_token) {
             sendNotification(device_token, {
