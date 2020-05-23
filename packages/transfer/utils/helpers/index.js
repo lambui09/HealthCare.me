@@ -1,6 +1,7 @@
 const {fetchPatientFromMongo, fetchDoctorFromMongo, fetchSymptomFromMongo, fetchCommentFromMongo,
     fetchFavoriteFromMongo,
     fetchAppointmentFromMongo,
+    fetchSpecialistFromMongo,
 } = require("./fetch-data");
 
 const { driver } = require('../../config/database/neo4j');
@@ -50,6 +51,41 @@ const addPatientToNeo4j = async () => {
     }
 };
 
+const addSpecialistToNeo4j = async () => {
+    console.log('Start transfer Specialist...');
+    const session = driver.session();
+    const txc = session.beginTransaction()
+    try {
+        const specialist = await fetchSpecialistFromMongo();
+        for (const item of specialist) {
+            const queryStr = `
+                MERGE (specialist:Specialist {
+                    _id: $_id
+                })
+                ON CREATE SET
+                    specialist.name = $name
+                ON MATCH SET
+                    specialist.name = $name
+                RETURN specialist.name as name
+                `;
+
+            await txc.run(queryStr, {
+                _id: item._id.toString(),
+                name: item.name || ''
+            });
+        }
+
+        await txc.commit();
+        console.log('Transfer Specialist Success! Total: ' + specialist.length);
+    } catch (e) {
+        await txc.rollback()
+        console.log(e);
+        console.log('Transfer Specialist failed!');
+    } finally {
+        await session.close()
+    }
+}
+
 const addDoctorToNeo4j = async () => {
     console.log('Start transfer Doctor...');
     const session = driver.session();
@@ -71,6 +107,11 @@ const addDoctorToNeo4j = async () => {
                     doctor.last_name=$last_name,
                     doctor.address=$address,
                     doctor.location=point({latitude:toFloat($latitude),longitude:toFloat($longitude)})
+                WITH doctor
+                MATCH(specialist: Specialist {
+                    _id: $specialist
+                })
+                MERGE(doctor)-[r:HAS_SPECIALIST]-(specialist)
                 RETURN doctor.first_name as first_name
                 `;
 
@@ -81,6 +122,7 @@ const addDoctorToNeo4j = async () => {
                 address: item.address || '',
                 longitude: item.location && item.location.coordinates[0] ? item.location.coordinates[0] : -1,
                 latitude: item.location && item.location.coordinates[1] ? item.location.coordinates[1] : -1,
+                specialist: item.specialist.toString(),
             });
         }
 
@@ -292,6 +334,7 @@ const deleteAllData = async () => {
 
 module.exports = {
     addPatientToNeo4j,
+    addSpecialistToNeo4j,
     addDoctorToNeo4j,
     addSymptomToNeo4j,
     addCommentToNeo4j,

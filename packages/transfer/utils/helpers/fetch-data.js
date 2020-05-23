@@ -4,6 +4,7 @@ const Symptom = require('../../models/Symptom');
 const Comment = require('../../models/Comment');
 const Favorite = require('../../models/Favorite');
 const Appointment = require('../../models/Appointment');
+const Specialist = require('../../models/Specialist');
 
 const fetchPatientFromMongo = async () => {
     try {
@@ -29,7 +30,7 @@ const fetchSymptomFromMongo = async () => {
     }
 };
 
-fetchCommentFromMongo = async () => {
+const fetchCommentFromMongo = async () => {
     try {
         return await Comment.find().lean();
     } catch (error) {
@@ -37,7 +38,7 @@ fetchCommentFromMongo = async () => {
     }
 };
 
-fetchFavoriteFromMongo = async () => {
+const fetchFavoriteFromMongo = async () => {
     try {
         return await Favorite.find().lean();
     } catch (error) {
@@ -45,7 +46,7 @@ fetchFavoriteFromMongo = async () => {
     }
 };
 
-fetchAppointmentFromMongo = async () => {
+const fetchAppointmentFromMongo = async () => {
     try {
         return await Appointment.find().lean();
     } catch (error) {
@@ -53,11 +54,20 @@ fetchAppointmentFromMongo = async () => {
     }
 };
 
+const fetchSpecialistFromMongo = async () => {
+    try {
+        return await Specialist.find().lean();
+    } catch (error) {
+        return [];
+    }
+}
+
 module.exports = {
     fetchPatientFromMongo,
     fetchDoctorFromMongo,
     fetchSymptomFromMongo,
     fetchCommentFromMongo,
     fetchFavoriteFromMongo,
-    fetchAppointmentFromMongo
+    fetchAppointmentFromMongo,
+    fetchSpecialistFromMongo
 }

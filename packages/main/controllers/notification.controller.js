@@ -1,7 +1,7 @@
 const Notification = require('../models/Notification');
 
 const getAllNotificationsByUser = async (req, res) => {
-    const user_id = req.user._id;
+    const user_id = req.user.user_id._id;
     const role = req.user.user_id.role.toLowerCase();
     const filter = {
         [role]: user_id,
@@ -25,7 +25,7 @@ const getAllNotificationsByUser = async (req, res) => {
 };
 
 const countNotificationUnseen = async (req, res) => {
-    const user_id = req.user._id;
+    const user_id = req.user.user_id._id;
     const role = req.user.user_id.role.toLowerCase();
     const filter = {
         [role]: user_id,

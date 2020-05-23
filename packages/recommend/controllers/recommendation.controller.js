@@ -21,7 +21,7 @@ const checkPatientInteracted = async (patient_id) => {
 };
 
 const searchController = async (req, res) => {
-    const { patient_id, symptom_list, keyword } = req.body;
+    const { patient_id, symptom_list, keyword, specialist_id } = req.body;
     const session = driver.session();
     try {
         const hasInteracted = await checkPatientInteracted();
@@ -64,7 +64,8 @@ const searchController = async (req, res) => {
             ORDER BY pearson_similarity DESC
             LIMIT 15
             MATCH (p2)-[r:INTERACTIVE]-(d:Doctor)
-            WHERE doctor.first_name CONTAINS $keyword
+            MATCH(doctor)-[]-(specialist: Specialist)
+            WHERE specialist._id = $specialist AND d.first_name CONTAINS $keyword
             WITH d, SUM( pearson_similarity * r.score) AS similar_score
             MATCH (symptom:Symptom)-[:IS_BOOKED_WITH]-(d)
             WHERE symptom._id IN $symptom_list
@@ -74,10 +75,11 @@ const searchController = async (req, res) => {
 
         const notInteractiveQuery = `
             UNWIND $symptom_list as _id
-            MATCH (symptom:Symptom) WHERE symptom._id = _id
-            MATCH (doctor:Doctor)-[:IS_BOOKED_WITH]-(symptom)
-            MATCH (doctor)-[r1:INTERACTIVE]-(:Patient)
-            WHERE doctor.first_name CONTAINS $keyword
+            OPTIONAL MATCH (symptom:Symptom) WHERE symptom._id = _id
+            OPTIONAL MATCH(doctor: Doctor) - [: IS_BOOKED_WITH] - (symptom)
+            OPTIONAL MATCH(doctor) - [r1: INTERACTIVE] - (: Patient)
+            MATCH (doctor)-[]-(specialist: Specialist)
+            WHERE specialist._id = $specialist AND doctor.first_name CONTAINS $keyword
             WITH sum(DISTINCT r1.score) as recommendation_score, doctor    
             ORDER BY recommendation_score DESC
             RETURN doctor._id as _id, recommendation_score
@@ -88,15 +90,22 @@ const searchController = async (req, res) => {
         const result = await session.run(queryCypher, {
             symptom_list: symptom_list,
             patient: patient_id,
-            keyword: keyword || ''
+            keyword: keyword || '',
+            specialist: specialist_id,
         });
-
         if (result && result.records && result.records.length) {
-            return result.records;
+            const doctor_list = result.records.map(record => {
+                return {
+                    _id: record.get('_id'),
+                    recommendation: record.get('recommendation_score')
+                }
+            });
+            return res.status(200).json(doctor_list);
         }
-        return [];
+         return res.status(200).json([]);
     } catch (e) {
-        return [];
+        console.log(e);
+         return res.status(200).json([]);
     }
 };
 

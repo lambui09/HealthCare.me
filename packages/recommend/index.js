@@ -1,12 +1,16 @@
 require('dotenv').config();
 const express = require('express');
+const bodyParser = require('body-parser');
+
 require('./config/database/mongo');
 require('./config/database/neo4j');
 const RecommendationRouter = require('./routes/recommendation');
 
 const app = express();
 
-app.use('/recommendation/search', RecommendationRouter);
+app.use(bodyParser.json());
+
+app.use('/recommendation', RecommendationRouter);
 
 app.get('/', (req, res) => res.status(200).json({
     message: 'It ok.'

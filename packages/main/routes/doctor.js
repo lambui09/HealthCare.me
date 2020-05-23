@@ -5,7 +5,9 @@ const router = express.Router();
 const passport = require('passport');
 
 router.patch('/:doctor_id', doctorController.updateDoctor);
-router.get('/search', doctorController.searchDoctor);
+router.post('/search', passport.authenticate('jwt', {
+    session: false
+}), doctorController.searchDoctor);
 router.get('/', doctorController.getDoctor);
 router.get('/:doctor_id',doctorController.getDetailDoctor);
 router.post('/:doctor_id/favorite',passport.authenticate('jwt', {

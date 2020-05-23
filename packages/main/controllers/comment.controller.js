@@ -54,7 +54,7 @@ const createCommentToDoctor = async (req, res) => {
             status: 401,
         });
     }
-    const commenter = req.user.id;
+    const commenter = req.user.user_id._id;
     const data = {
         ...req.body,
         doctor: doctor_id,
