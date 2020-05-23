@@ -40,6 +40,7 @@ const searchDoctor = async (req, res) => {
     const {
         keyword,
         symptom_list,
+        specialist_id,
     } = req.body;
 
     const user_id = req.user.user_id._id;
@@ -48,16 +49,34 @@ const searchDoctor = async (req, res) => {
         const dataRecommended = await axios.post('http://localhost:3005/recommendation/search', {
             patient_id: user_id,
             symptom_list: symptom_list || [],
-            keyword
+            keyword,
+            specialist_id,
         });
-
+    
         const recommended_list_id = dataRecommended.data.map(item => item._id);
+
+        if (!recommended_list_id.length) {
+            const list_doctor = await Doctor.find({
+                specialist: specialist_id,
+                full_name: new RegExp(keyword, 'i'),
+            }).populate('specialist').populate('examination_list').lean();
+            return res.status(200).json({
+                success: true,
+                data: {
+                    data: list_doctor || [],
+                    total_size: list_doctor.length || 0,
+                },
+                statusCode: 200
+            });
+        }
+
 
         const list_doctor = await Doctor.find({
             _id: {
                 '$in': recommended_list_id,
             }
-        }).populate('specialist').lean();
+        }).populate('specialist').populate('examination_list').lean();
+
         return res.status(200).json({
             success: true,
             data: {
