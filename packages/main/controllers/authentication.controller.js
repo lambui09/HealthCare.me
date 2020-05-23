@@ -117,8 +117,9 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
+    const user_id = req.user.user_id._id;
     try {
-        await User.findByIdAndUpdate(req.user.user_id, {
+        await User.findByIdAndUpdate(user_id, {
             is_exp: true
         });
         return res.status(200).json({

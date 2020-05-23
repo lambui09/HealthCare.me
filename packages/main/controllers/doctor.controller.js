@@ -1,19 +1,25 @@
 const Doctor = require('../models/Doctor');
 const Favorite = require('../models/Favorite');
-const Specialist = require('../models/Specialist');
+const axios = require('axios');
 
 const updateDoctor = async (req, res) => {
     //Todo update doctor examination + specialist
     const errors = {};
-    const {doctor_id} = req.params;
+    const {
+        doctor_id
+    } = req.params;
     console.log(doctor_id);
-    let {body: data} = req;
+    let {
+        body: data
+    } = req;
     if (data.first_name || data.last_name) {
         const full_name = `${data.last_name} ${data.first_name}`;
         data.full_name = full_name;
     }
     try {
-        const doctorUpdated = await Doctor.findByIdAndUpdate(doctor_id, data, {new: true});
+        const doctorUpdated = await Doctor.findByIdAndUpdate(doctor_id, data, {
+            new: true
+        });
         console.log(doctorUpdated);
         return res.status(200).json({
             success: true,
@@ -33,44 +39,49 @@ const updateDoctor = async (req, res) => {
 const searchDoctor = async (req, res) => {
     const {
         keyword,
-        latitude,
-        longitude
-    } = req.query;
-    console.log(req.query);
+        symptom_list,
+    } = req.body;
+
+    const user_id = req.user.user_id._id;
 
     try {
+        const dataRecommended = await axios.post('http://localhost:3005/recommendation/search', {
+            patient_id: user_id,
+            symptom_list: symptom_list || [],
+            keyword
+        });
+
+        const recommended_list_id = dataRecommended.data.map(item => item._id);
+
         const list_doctor = await Doctor.find({
-            full_name: new RegExp(keyword, 'i'),
-            location: {
-                "$geoNear": {
-                    "$maxDistance": 10000,
-                    "$geometry": {
-                        type: "Point",
-                        coordinates: [+longitude, +latitude]
-                    }
-                }
+            _id: {
+                '$in': recommended_list_id,
             }
         }).populate('specialist').lean();
         return res.status(200).json({
             success: true,
             data: {
-                data: list_doctor,
-                total_size: list_doctor.length,
+                data: list_doctor || [],
+                total_size: list_doctor.length || 0,
             },
             statusCode: 200
         });
     } catch (error) {
-        console.log(error);
         return res.status(200).json({
             success: true,
-            data: {},
+            data: {
+                data: [],
+                total_size: 0,
+            },
             statusCode: 200
         });
     }
 };
 
 const getDoctor = async (req, res) => {
-    const {doctor_id} = req.query;
+    const {
+        doctor_id
+    } = req.query;
     const filter = {};
     if (doctor_id) {
         filter._id = doctor_id;
@@ -99,10 +110,10 @@ const addFavorite = async (req, res) => {
         user
     } = req;
     const errors = {};
-    const {doctor_id} = req.params;
-    const {patient_id} = req.user;
+    const {
+        doctor_id
+    } = req.params;
 
-    console.log(doctor_id);
     let doctor = null;
     try {
         doctor = await Doctor.findById(doctor_id);
@@ -122,7 +133,7 @@ const addFavorite = async (req, res) => {
     try {
         favorite = await Favorite.findOne({
             doctor: doctor_id,
-            favorite_personal: user.id,
+            favorite_personal: user.user_id._id,
         });
         console.log(favorite)
     } catch (error) {
@@ -133,7 +144,7 @@ const addFavorite = async (req, res) => {
     if (!favorite) {
         const data = {
             is_favorite: true,
-            favorite_personal: user.id,
+            favorite_personal: user.user_id._id,
             doctor: doctor_id,
         };
         const newDoctorFavorite = new Favorite(data);
@@ -221,7 +232,9 @@ const getAllDoctor = async (req, res) => {
 
 const getDetailDoctor = async (req, res) => {
     const errors = {};
-    const {doctor_id} = req.params;
+    const {
+        doctor_id
+    } = req.params;
     let doctor = null;
     try {
         doctor = await Doctor.findById(doctor_id).populate('specialist').lean();
@@ -231,12 +244,10 @@ const getDetailDoctor = async (req, res) => {
     }
     if (!doctor) {
         errors.error = 'Can\'t get detail doctor, Please try again later';
-        return res.status(404).json(
-            {
-                success: false,
-                errors,
-            },
-        );
+        return res.status(404).json({
+            success: false,
+            errors,
+        }, );
     }
     return res.status(200).json({
         success: true,
@@ -246,7 +257,10 @@ const getDetailDoctor = async (req, res) => {
     });
 };
 const getDoctorNearBy = async (req, res) => {
-    const {latitude: lat, longitude: lng} = req.query;
+    const {
+        latitude: lat,
+        longitude: lng
+    } = req.query;
     const distance = 10000;
     try {
         const doctorList = await Doctor.find({

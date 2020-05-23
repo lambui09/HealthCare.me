@@ -91,12 +91,20 @@ const searchController = async (req, res) => {
             keyword: keyword || ''
         });
 
+         console.log(result.records);
         if (result && result.records && result.records.length) {
-            return result.records;
+            console.log(result.records);
+            const doctor_list = result.records.map(record => {
+                return {
+                    _id: record.get('_id'),
+                    recommendation: record.get('recommendation_score')
+                }
+            });
+            return res.status(200).json(doctor_list);
         }
-        return [];
+         return res.status(200).json([]);
     } catch (e) {
-        return [];
+         return res.status(200).json([]);
     }
 };
 
