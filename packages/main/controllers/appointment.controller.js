@@ -81,14 +81,14 @@ const updateAppointment = async (req, res) => {
     }
 
     try {
-        const appointmentUpdated = await Appointment.findByIdAndUpdate(appointment_id, data).populate('doctor_id')
+        const appointmentUpdated = await Appointment.findByIdAndUpdate(appointment_id, data, {new: true}).populate('doctor_id')
             .populate('patient_id').lean();
 
         const msgObj = {
             'COMPLETED': 'đã hoàn thành',
             'CONFIRMED': 'đã được xác nhận',
             'CANCELED': 'đã bị hủy'
-        }
+        };
         //add send notification
         const title = `Lịch khám của bạn với bác sĩ ${appointmentUpdated.doctor_id.full_name} ${msgObj[data.status]}.`;
         const body = `Vào lúc ${moment(appointmentUpdated.updatedAt).format('DD/MM/YYYY HH:mm')}`;
