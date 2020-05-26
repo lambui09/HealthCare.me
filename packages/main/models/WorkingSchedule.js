@@ -27,10 +27,6 @@ const workingScheduleSchema = new Schema({
         type: Number,
         default: 30,
     },
-    is_active: {
-        type: Boolean,
-        default: false
-    },
     doctor_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Doctor',
