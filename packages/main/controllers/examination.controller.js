@@ -8,10 +8,11 @@ const createExamination = async (req, res) => {
     const {
         user
     } = req;
+    console.log(user);
     try {
         const newExamination = new Examination();
         newExamination.service_name = service_name;
-        newExamination.doctor_id = user._id;
+        newExamination.creator = user._id;
         const newExaminationCreated = await newExamination.save();
         return res.status(200).json({
             success: true,
