@@ -120,19 +120,20 @@ const updateAppointment = async (req, res) => {
 
 const getListAppointment = async (req, res) => {
     const {
-        doctor_id,
-        patient_id,
         appointment_id,
         status,
     } = req.body;
 
+    const user_id = req.user._id;
+    const role = req.user.user_id.role;
+
     let filter = {};
-    if (doctor_id) {
-        filter.doctor_id = mongoose.Types.ObjectId(patient_id);
+    if (role === 'PATIENT') {
+        filter.patient_id = mongoose.Types.ObjectId(user_id);
+    } else {
+        filter.doctor_id = mongoose.Types.ObjectId(user_id);
     }
-    if (patient_id) {
-        filter.patient_id = mongoose.Types.ObjectId(patient_id);
-    }
+
     if (appointment_id) {
         filter.appointment_id = appointment_id;
     }
