@@ -4,6 +4,8 @@ const sendNotification = require('../helpers/sendNotification');
 const Doctor = require('../models/Doctor');
 const Patient = require('../models/Patient');
 
+const mongoose = require('mongoose');
+
 const createAppointment = async (req, res) => {
     const {
         duration,
@@ -122,33 +124,23 @@ const getListAppointment = async (req, res) => {
         patient_id,
         appointment_id,
         status,
-        status_not,
-    } = req.query;
-    console.log(req.query);
+    } = req.body;
 
     let filter = {};
     if (doctor_id) {
-        filter.doctor_id = doctor_id;
+        filter.doctor_id = mongoose.Types.ObjectId(patient_id);
     }
     if (patient_id) {
-        filter.patient_id = patient_id;
+        filter.patient_id = mongoose.Types.ObjectId(patient_id);
     }
     if (appointment_id) {
         filter.appointment_id = appointment_id;
     }
 
     if (status) {
-        filter.status = status;
-    }
-
-    if (status_not) {
-        const newFilter = {
-            ...filter,
-            '$not': {
-                status_not,
-            }
+        filter.status = {
+            '$in': status
         };
-        filter = {...newFilter};
     }
 
     let appointments;

@@ -6,7 +6,7 @@ const router = express.Router();
 router.post('/', passport.authenticate('jwt', {
     session: false
 }), appointmentController.createAppointment);
-router.get('/', passport.authenticate('jwt', {
+router.post('/list', passport.authenticate('jwt', {
     session: false
 }), appointmentController.getListAppointment);
 router.patch('/:appointment_id', passport.authenticate('jwt', {
