@@ -8,7 +8,7 @@ const getAllNotificationsByUser = async (req, res) => {
         isSent: role !== 'patient'
     };
     try {
-        const notiList = await Notification.find(filter).populate('patient').populate('doctor').lean();
+        const notiList = await Notification.find(filter).sort({ 'updatedAt': -1 }).populate('patient').populate('doctor').lean();
         return res.status(200).json({
             status: true,
             data: {
