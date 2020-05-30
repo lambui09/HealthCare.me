@@ -1,12 +1,11 @@
 const moment = require('moment');
 const WorkingSchedule = require('../models/WorkingSchedule');
 const Appointment = require('../models/Appointment');
+const mongoose = require('mongoose');
 
 const createWorkingSchedule = async (req, res) => {
     const {
-        user: {
-            user_id
-        }
+        user
     } = req;
     const {
         from_date,
@@ -19,12 +18,13 @@ const createWorkingSchedule = async (req, res) => {
     if (duration_default_appointment) {
         newWorkingSchedule.duration_default_appointment = duration_default_appointment;
     }
-    newWorkingSchedule.doctor_id = user_id;
+    newWorkingSchedule.doctor_id = mongoose.Types.ObjectId(user._id);
     newWorkingSchedule.from_date = moment(from_date);
     newWorkingSchedule.end_date = moment(end_date);
     newWorkingSchedule.start_time = start_time;
     newWorkingSchedule.end_time = end_time;
     newWorkingSchedule.list_time = rangeTime(start_time, end_time, duration_default_appointment);
+    console.log(newWorkingSchedule.doctor_id);
 
     try {
         await newWorkingSchedule.save();
@@ -36,7 +36,7 @@ const createWorkingSchedule = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            errorMessage: 'Server err',
+            errorMessage: 'Server error',
             statusCode: 500,
         })
     }
@@ -90,7 +90,7 @@ const getAvailableTime = async (req, res) => {
             success: true,
             data: {
                 data: list_time_available,
-                total_size : list_time_available.length,
+                total_size: list_time_available.length,
             },
             statusCode: 200,
         });
