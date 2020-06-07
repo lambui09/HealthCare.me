@@ -4,3 +4,6 @@ node_modules/
 
 db/neo4j/*
 db/mongo/*
+
+!db/neo4j/.gitkeep
+!db/mongo/.gitkeep
