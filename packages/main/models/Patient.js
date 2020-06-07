@@ -45,10 +45,6 @@ const patientSchema = new Schema({
         type: Boolean,
         default: false
     },
-    push_notification_enabled: {
-        type: Boolean,
-        default: false
-    },
     unseen_notification_count: {
         type: Number,
         default: 0
