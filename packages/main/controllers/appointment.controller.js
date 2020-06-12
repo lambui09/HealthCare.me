@@ -83,8 +83,12 @@ const updateAppointment = async (req, res) => {
     }
 
     try {
-        const appointmentUpdated = await Appointment.findByIdAndUpdate(appointment_id, data, {new: true}).populate('doctor_id')
-            .populate('patient_id').lean();
+        const appointmentUpdated = await Appointment.findByIdAndUpdate(appointment_id, data, {new: true}).populate('patient_id')
+            .populate({
+                path: 'doctor_id',
+                populate: {path: 'specialist'}
+            })
+            .lean();
 
         const msgObj = {
             'COMPLETED': 'đã hoàn thành',
@@ -155,6 +159,7 @@ const getListAppointment = async (req, res) => {
                     populate: {path: 'specialist'}
                 }
             )
+        console.log(appointments)
     } catch (error) {
         appointments = [];
     }

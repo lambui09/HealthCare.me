@@ -26,7 +26,34 @@ const updatePatient = async (req, res) => {
         })
     }
 };
+const getDetailPatient = async (req, res) => {
+    const errors = {};
+    const {
+        patient_id
+    } = req.params;
+    let patient = null;
+    try {
+        patient = await Patient.findById(patient_id).lean();
+    } catch (error) {
+        console.log(error);
+        patient = null;
+    }
+    if (!patient) {
+        errors.error = 'Can\'t get detail doctor, Please try again later';
+        return res.status(404).json({
+            success: false,
+            errors,
+        },);
+    }
+    return res.status(200).json({
+        success: true,
+        data: {
+            patient,
+        },
+    });
+};
 
 module.exports = {
-    updatePatient
+    updatePatient,
+    getDetailPatient
 };
