@@ -1,7 +1,6 @@
 const moment = require('moment');
 const WorkingSchedule = require('../models/WorkingSchedule');
 const Appointment = require('../models/Appointment');
-const Doctor = require('../models/Doctor');
 const mongoose = require('mongoose');
 
 const createWorkingSchedule = async (req, res) => {
@@ -131,7 +130,7 @@ const getWorkingScheduleDoctor = async (req, res) => {
     } = req.params;
     let workingSchedule = null;
     try {
-        workingSchedule = await Doctor.findById(doctor_id).lean();
+        workingSchedule = await WorkingSchedule.findOne({doctor_id : doctor_id}).lean();
     } catch (error) {
         console.log(error);
         workingSchedule = null;
