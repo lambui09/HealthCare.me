@@ -11,5 +11,6 @@ router.post('/', passport.authenticate('jwt', {
 router.get('/:doctor_id/available', passport.authenticate('jwt', {
     session: false
 }), workingScheduleController.getAvailableTime);
+router.get('/:doctor_id', workingScheduleController.getWorkingScheduleDoctor);
 
 module.exports = router;

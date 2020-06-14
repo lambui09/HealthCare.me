@@ -122,7 +122,33 @@ function rangeTime(start, end, step = 15) {
     }
     return data;
 }
+
+const getWorkingScheduleDoctor = async (req, res) => {
+    const errors = {};
+    const {
+        doctor_id
+    } = req.params;
+    let workingSchedule = null;
+    try {
+        workingSchedule = await WorkingSchedule.findOne({doctor_id : doctor_id}).lean();
+    } catch (error) {
+        console.log(error);
+        workingSchedule = null;
+    }
+    if (!workingSchedule) {
+        errors.error = 'Can\'t get work schedule of doctor, Please try again later';
+        return res.status(404).json({
+            success: false,
+            errors,
+        },);
+    }
+    return res.status(200).json({
+        success: true,
+        data: workingSchedule,
+    });
+};
 module.exports = {
     createWorkingSchedule,
-    getAvailableTime
+    getAvailableTime,
+    getWorkingScheduleDoctor
 };
