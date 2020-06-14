@@ -122,7 +122,7 @@ const addDoctorToNeo4j = async () => {
                 address: item.address || '',
                 longitude: item.location && item.location.coordinates[0] ? item.location.coordinates[0] : -1,
                 latitude: item.location && item.location.coordinates[1] ? item.location.coordinates[1] : -1,
-                specialist: item.specialist.toString(),
+                specialist: item.specialist ? item.specialist.toString() : '',
             });
         }
 
