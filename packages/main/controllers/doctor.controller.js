@@ -46,7 +46,7 @@ const searchDoctor = async (req, res) => {
     const user_id = req.user.user_id._id;
 
     try {
-        const dataRecommended = await axios.post('http://localhost:3005/recommendation/search', {
+        const dataRecommended = await axios.post(`${process.env.API_RECOMMEND_URL}/recommendation/search`, {
             patient_id: user_id,
             symptom_list: symptom_list || [],
             keyword,
@@ -86,6 +86,7 @@ const searchDoctor = async (req, res) => {
             statusCode: 200
         });
     } catch (error) {
+        console.log(error);
         return res.status(200).json({
             success: true,
             data: {
