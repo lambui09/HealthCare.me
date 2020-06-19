@@ -48,7 +48,7 @@ const fetchFavoriteFromMongo = async () => {
 
 const fetchAppointmentFromMongo = async () => {
   try {
-    return await Appointment.find().lean();
+    return await Appointment.find({ status: 'COMPLETED' }).lean();
   } catch (error) {
     return [];
   }

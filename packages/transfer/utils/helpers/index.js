@@ -278,7 +278,7 @@ const addAppointmentToNeo4j = async () => {
           patient: item.patient_id.toString(),
           doctor: item.doctor_id.toString(),
           scoreBooked: 2,
-          symptom: item_id,
+          symptom: item_id.toString(),
         });
       }
 
