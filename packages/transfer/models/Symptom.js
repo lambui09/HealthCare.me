@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
 const {
-    Schema
+  Schema
 } = mongoose;
 
 const SymptomSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-    },
+  name: {
+    type: String,
+    required: true,
+  },
 }, {
-    timestamps: {
-        createdAt: 'createdAt',
-        updatedAt: 'updatedAt'
-    }
+  timestamps: {
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  }
 });
 
 module.exports = mongoose.model('Symptom', SymptomSchema);

@@ -7,67 +7,67 @@ const Appointment = require('../../models/Appointment');
 const Specialist = require('../../models/Specialist');
 
 const fetchPatientFromMongo = async () => {
-    try {
-        return await Patient.find().lean();
-    } catch (error) {
-        return [];
-    }
+  try {
+    return await Patient.find().lean();
+  } catch (error) {
+    return [];
+  }
 };
 
 const fetchDoctorFromMongo = async () => {
-    try {
-        return await Doctor.find().lean();
-    } catch (error) {
-        return [];
-    }
+  try {
+    return await Doctor.find().lean();
+  } catch (error) {
+    return [];
+  }
 };
 
 const fetchSymptomFromMongo = async () => {
-    try {
-        return await Symptom.find().lean();
-    } catch (error) {
-        return [];
-    }
+  try {
+    return await Symptom.find().lean();
+  } catch (error) {
+    return [];
+  }
 };
 
 const fetchCommentFromMongo = async () => {
-    try {
-        return await Comment.find().lean();
-    } catch (error) {
-        return [];
-    }
+  try {
+    return await Comment.find().lean();
+  } catch (error) {
+    return [];
+  }
 };
 
 const fetchFavoriteFromMongo = async () => {
-    try {
-        return await Favorite.find().lean();
-    } catch (error) {
-        return [];
-    }
+  try {
+    return await Favorite.find().lean();
+  } catch (error) {
+    return [];
+  }
 };
 
 const fetchAppointmentFromMongo = async () => {
-    try {
-        return await Appointment.find().lean();
-    } catch (error) {
-        return [];
-    }
+  try {
+    return await Appointment.find().lean();
+  } catch (error) {
+    return [];
+  }
 };
 
 const fetchSpecialistFromMongo = async () => {
-    try {
-        return await Specialist.find().lean();
-    } catch (error) {
-        return [];
-    }
+  try {
+    return await Specialist.find().lean();
+  } catch (error) {
+    return [];
+  }
 }
 
 module.exports = {
-    fetchPatientFromMongo,
-    fetchDoctorFromMongo,
-    fetchSymptomFromMongo,
-    fetchCommentFromMongo,
-    fetchFavoriteFromMongo,
-    fetchAppointmentFromMongo,
-    fetchSpecialistFromMongo
+  fetchPatientFromMongo,
+  fetchDoctorFromMongo,
+  fetchSymptomFromMongo,
+  fetchCommentFromMongo,
+  fetchFavoriteFromMongo,
+  fetchAppointmentFromMongo,
+  fetchSpecialistFromMongo
 }

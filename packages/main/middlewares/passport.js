@@ -10,23 +10,23 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('Bearer');
 opts.secretOrKey = process.env.JWT_SECRET_KEY;
 
 passport.use('jwt', new JwtStrategy(opts, async (jwt_payload, done) => {
-    try {
-        const user = await User.findOne({
-            _id: jwt_payload._id,
-            is_exp: false,
-        });
-        if (!user) {
-            throw new Error('User not found!');
-        }
-        const Model = user.role === 'DOCTOR' ? Doctor : Patient;
-        const userRole = await Model.findOne({
-            user_id: user._id
-        }).populate('user_id');
-        if (!userRole) {
-            throw new Error('User not found!');
-        }
-        return done(null, userRole);
-    } catch (error) {
-        return done(error, false);
+  try {
+    const user = await User.findOne({
+      _id: jwt_payload._id,
+      is_exp: false,
+    });
+    if (!user) {
+      throw new Error('User not found!');
     }
+    const Model = user.role === 'DOCTOR' ? Doctor : Patient;
+    const userRole = await Model.findOne({
+      user_id: user._id
+    }).populate('user_id');
+    if (!userRole) {
+      throw new Error('User not found!');
+    }
+    return done(null, userRole);
+  } catch (error) {
+    return done(error, false);
+  }
 }));
