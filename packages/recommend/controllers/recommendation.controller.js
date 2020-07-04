@@ -1,32 +1,32 @@
 const {driver} = require('../config/database/neo4j');
 
 const checkPatientInteracted = async (patient_id) => {
-  const queryCypher = `
+    const queryCypher = `
             MATCH (p: Patient { _id: $patient })-[r:INTERACTIVE]-(:Doctor)
             WITH COUNT(r) as hasInteracted
             RETURN hasInteracted
         `;
-  const session = driver.session();
-  try {
-    const result = await session.run(queryCypher, {
-      patient: patient_id,
-    });
-    const hasInteracted = result && result.records && result.records.length > 0 && result.records[0].get('hasInteracted');
-    return !!hasInteracted;
-  } catch (e) {
-    return false;
-  } finally {
-    await session.close();
-  }
+    const session = driver.session();
+    try {
+        const result = await session.run(queryCypher, {
+            patient: patient_id,
+        });
+        const hasInteracted = result && result.records && result.records.length > 0 && result.records[0].get('hasInteracted');
+        return !!hasInteracted;
+    } catch (e) {
+        return false;
+    } finally {
+        await session.close();
+    }
 };
 
 const searchController = async (req, res) => {
-  const {patient_id, symptom_list, keyword, specialist_id} = req.body;
-  const session = driver.session();
-  try {
-    const hasInteracted = await checkPatientInteracted();
+    const {patient_id, symptom_list, keyword, specialist_id} = req.body;
+    const session = driver.session();
+    try {
+        const hasInteracted = await checkPatientInteracted();
 
-    const interactiveQueryBackup = `
+        const interactiveQueryBackup = `
             MATCH (p1:Patient { _id: $patient })-[r:INTERACTIVE]-(d:Doctor)
             WITH p1, AVG(r.score) AS p1_mean
             MATCH (p1)-[r1:INTERACTIVE]-(d:Doctor)-[r2:INTERACTIVE]-(p2:Patient)
@@ -47,7 +47,7 @@ const searchController = async (req, res) => {
             ORDER BY recommendation_score DESC
         `;
 
-    const interactiveQuery = `
+        const interactiveQuery = `
             MATCH (p1:Patient { _id: $patient })-[r:INTERACTIVE]-(d:Doctor)
             WITH p1, AVG(r.score) AS p1_mean
             MATCH (p1)-[r1:INTERACTIVE]-(d:Doctor)-[r2:INTERACTIVE]-(p2:Patient)
@@ -73,7 +73,7 @@ const searchController = async (req, res) => {
             ORDER BY recommendation_score DESC
         `;
 
-    const notInteractiveQuery = `
+        const notInteractiveQuery = `
             UNWIND $symptom_list as _id
             OPTIONAL MATCH (symptom:Symptom) WHERE symptom._id = _id
             OPTIONAL MATCH(doctor: Doctor) - [: IS_BOOKED_WITH] - (symptom)
@@ -85,30 +85,30 @@ const searchController = async (req, res) => {
             RETURN doctor._id as _id, recommendation_score
         `;
 
-    const queryCypher = hasInteracted ? interactiveQuery : notInteractiveQuery;
+        const queryCypher = hasInteracted ? interactiveQuery : notInteractiveQuery;
 
-    const result = await session.run(queryCypher, {
-      symptom_list: symptom_list,
-      patient: patient_id,
-      keyword: keyword || '',
-      specialist: specialist_id,
-    });
-    if (result && result.records && result.records.length) {
-      const doctor_list = result.records.map(record => {
-        return {
-          _id: record.get('_id'),
-          recommendation: record.get('recommendation_score')
+        const result = await session.run(queryCypher, {
+            symptom_list: symptom_list,
+            patient: patient_id,
+            keyword: keyword || '',
+            specialist: specialist_id,
+        });
+        if (result && result.records && result.records.length) {
+            const doctor_list = result.records.map(record => {
+                return {
+                    _id: record.get('_id'),
+                    recommendation: record.get('recommendation_score')
+                }
+            });
+            return res.status(200).json(doctor_list);
         }
-      });
-      return res.status(200).json(doctor_list);
+        return res.status(200).json([]);
+    } catch (e) {
+        console.log(e);
+        return res.status(200).json([]);
     }
-    return res.status(200).json([]);
-  } catch (e) {
-    console.log(e);
-    return res.status(200).json([]);
-  }
 };
 
 module.exports = {
-  searchController,
+    searchController,
 };
