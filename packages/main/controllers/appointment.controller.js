@@ -156,9 +156,11 @@ const getListAppointment = async (req, res) => {
       .populate(
         {
           path: 'doctor_id',
-          populate: {path: 'specialist'}
+          populate: {path: 'specialist examination_list'},
         }
-      )
+      ).populate(
+            'symptom_list'
+        )
     console.log(appointments)
   } catch (error) {
     appointments = [];

@@ -14,6 +14,9 @@ const createExamination = async (req, res) => {
         newExamination.service_name = service_name;
         newExamination.creator = user._id;
         const newExaminationCreated = await newExamination.save();
+        const doctor = await Doctor.findById(user._id);
+        doctor.examination_list.push(newExamination._id);
+        const updated = await doctor.save();
         return res.status(200).json({
             success: true,
             data: newExaminationCreated,
@@ -83,11 +86,11 @@ const deleteExamination = async (req, res) => {
 
 const getAllExaminationOfDoctor = async (req, res) => {
     const {doctor_id} = req.params;
-    console.log(doctor_id);
     try {
         const doctorItem = await Doctor.findById(doctor_id).populate('examination_list').lean();
+        console.log(doctorItem)
         const exam_list = doctorItem.examination_list;
-        //console.log(list_examination);
+        console.log(exam_list);
         return res.status(200).json({
             success: true,
             data: {
@@ -97,6 +100,7 @@ const getAllExaminationOfDoctor = async (req, res) => {
             statusCode: 200
         });
     } catch (error) {
+        console.log(error);
         return res.status(200).json({
             success: true,
             data: {},
